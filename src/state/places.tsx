@@ -110,7 +110,7 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
   const [persona, setPersona] = useState<PersonaResult | null>(null);
   const [city, setCityState] = useState<City>("cape-town");
   const [area, setAreaState] = useState<string | null>(null);
-  const [radiusKm, setRadiusState] = useState<number | null>(6);
+  const [radiusKm, setRadiusState] = useState<number | null>(10);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [deckPicks, setDeckPicks] = useState<Record<string, DeckVerdict>>({});
@@ -188,8 +188,8 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
       persist(STORAGE.city, "cape-town");
       setAreaState(null);
       persist(STORAGE.area, null);
-      setRadiusState(6);
-      persist(STORAGE.radius, 6);
+      setRadiusState(10);
+      persist(STORAGE.radius, 10);
     } else {
       const u: DeviceUser = device ?? {
         id: ME_ACTIVE.id,
@@ -310,7 +310,7 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
       id: `local-${Date.now()}`,
       fromUser: fromId,
       toUser: me.id,
-      placeId: placeId ?? "ct-woodstock-open-studio",
+      placeId: placeId ?? "ct-clay-hands",
       note: "",
       createdAtMs: Date.now(),
     };

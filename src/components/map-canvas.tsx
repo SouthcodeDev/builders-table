@@ -1,19 +1,80 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { CITIES, placesIn, type City } from "@/data/seed";
+import { CITIES, type City, type Place } from "@/data/seed";
 
 type Props = {
   city: City;
+  /** Exactly the places the feed is showing — the map never reads the seed itself. */
+  places: Place[];
+  selectedId?: string | null;
+  onSelectPin?: (placeId: string | null) => void;
   height?: number;
-  onSelectPin?: (placeId: string) => void;
 };
 
-export default function MapCanvas({ city, height, onSelectPin }: Props) {
+const FALLBACK_STYLE = "mapbox://styles/mapbox/streets-v12";
+// Leaves room for the safe top, the summary card and the tab bar.
+const FIT_PADDING = { top: 24, bottom: 176, left: 48, right: 48 };
+const FIT_MAX_ZOOM = 15;
+// Lifts the selected pin above the pin sheet.
+const SHEET_OFFSET_Y = 96;
+
+export default function MapCanvas({
+  city,
+  places,
+  selectedId = null,
+  onSelectPin,
+  height,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const markersRef = useRef(
+    new Map<string, { marker: mapboxgl.Marker; el: HTMLButtonElement }>(),
+  );
+  const placesRef = useRef(places);
+  const onSelectRef = useRef(onSelectPin);
+  const selectedRef = useRef(selectedId);
+
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+  const styleUrl = process.env.NEXT_PUBLIC_MAPBOX_STYLE || FALLBACK_STYLE;
+
+  useEffect(() => {
+    placesRef.current = places;
+  }, [places]);
+  useEffect(() => {
+    onSelectRef.current = onSelectPin;
+  }, [onSelectPin]);
+  useEffect(() => {
+    selectedRef.current = selectedId;
+  }, [selectedId]);
+
+  const applySelection = useCallback(() => {
+    const selected = selectedRef.current;
+    markersRef.current.forEach(({ el }, id) => {
+      const isSel = id === selected;
+      el.style.width = isSel ? "36px" : "26px";
+      el.style.height = isSel ? "36px" : "26px";
+      el.style.opacity = selected && !isSel ? "0.4" : "1";
+      el.style.zIndex = isSel ? "10" : "1";
+    });
+  }, []);
+
+  const fitToPlaces = useCallback(() => {
+    const map = mapRef.current;
+    const list = placesRef.current;
+    if (!map || list.length === 0) return;
+    const lngs = list.map((p) => p.lng);
+    const lats = list.map((p) => p.lat);
+    map.fitBounds(
+      [
+        [Math.min(...lngs), Math.min(...lats)],
+        [Math.max(...lngs), Math.max(...lats)],
+      ],
+      { padding: FIT_PADDING, maxZoom: FIT_MAX_ZOOM, duration: 600 },
+    );
+  }, []);
 
   useEffect(() => {
     if (!token || !containerRef.current) return;
@@ -21,27 +82,63 @@ export default function MapCanvas({ city, height, onSelectPin }: Props) {
     const map = new mapboxgl.Map({
       accessToken: token,
       container: containerRef.current,
-      style: "mapbox://styles/mapbox/streets-v12",
+      style: styleUrl,
       center: [meta.center.lng, meta.center.lat],
       zoom: meta.zoom,
+      maxBounds: meta.bounds,
     });
-    const markers = placesIn(city).map((p) => {
+    mapRef.current = map;
+
+    map.on("click", () => {
+      if (selectedRef.current !== null) onSelectRef.current?.(null);
+    });
+
+    // A flex container can resolve to 0x0 on first paint; Mapbox never recovers alone.
+    const ro = new ResizeObserver(() => map.resize());
+    ro.observe(containerRef.current);
+
+    return () => {
+      ro.disconnect();
+      map.remove();
+      mapRef.current = null;
+    };
+  }, [city, token, styleUrl]);
+
+  // Rebuild markers and re-frame whenever the visible set changes.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !token) return;
+    markersRef.current.forEach(({ marker }) => marker.remove());
+    markersRef.current.clear();
+
+    places.forEach((p) => {
       const el = document.createElement("button");
+      el.type = "button";
+      el.setAttribute("aria-label", p.title);
       el.style.cssText =
-        "width:28px;height:28px;border-radius:999px;background:#5100FF;border:3px solid #fff;box-shadow:0 8px 16px -8px rgba(10,10,10,0.5);cursor:pointer;padding:0";
+        "width:26px;height:26px;border-radius:999px;background:#5100FF;border:3px solid #fff;box-shadow:0 8px 16px -8px rgba(10,10,10,0.5);cursor:pointer;padding:0;transition:all 150ms ease";
       el.addEventListener("click", (e) => {
         e.stopPropagation();
-        onSelectPin?.(p.id);
+        onSelectRef.current?.(p.id);
       });
-      return new mapboxgl.Marker({ element: el })
+      const marker = new mapboxgl.Marker({ element: el })
         .setLngLat([p.lng, p.lat])
         .addTo(map);
+      markersRef.current.set(p.id, { marker, el });
     });
-    return () => {
-      markers.forEach((m) => m.remove());
-      map.remove();
-    };
-  }, [city, token, onSelectPin]);
+
+    applySelection();
+    fitToPlaces();
+  }, [places, token, applySelection, fitToPlaces]);
+
+  // Selected pin: distinct styling, eased above the sheet.
+  useEffect(() => {
+    applySelection();
+    const map = mapRef.current;
+    const p = placesRef.current.find((x) => x.id === selectedId);
+    if (!map || !p) return;
+    map.easeTo({ center: [p.lng, p.lat], offset: [0, SHEET_OFFSET_Y], duration: 450 });
+  }, [selectedId, applySelection]);
 
   if (!token) {
     return (
@@ -57,9 +154,18 @@ export default function MapCanvas({ city, height, onSelectPin }: Props) {
   }
   return (
     <div
-      ref={containerRef}
+      className={height ? "relative w-full" : "absolute inset-0"}
       style={height ? { height } : undefined}
-      className={height ? "w-full" : "absolute inset-0"}
-    />
+    >
+      <div ref={containerRef} className="absolute inset-0" />
+      <button
+        type="button"
+        onClick={fitToPlaces}
+        aria-label="Recentre map"
+        className="absolute right-3 top-3 z-10 grid h-11 w-11 place-items-center rounded-xl bg-surface shadow-[0_6px_16px_-6px_rgba(10,10,10,0.4)]"
+      >
+        <span className="block h-[15px] w-[15px] rounded-full border-[2.5px] border-accent" />
+      </button>
+    </div>
   );
 }

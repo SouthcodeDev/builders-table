@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { City } from "@/data/seed";
+import type { City, Place } from "@/data/seed";
 
 const MapCanvas = dynamic(() => import("./map-canvas"), {
   ssr: false,
@@ -10,12 +10,24 @@ const MapCanvas = dynamic(() => import("./map-canvas"), {
 
 export default function MapView({
   city,
-  height,
+  places,
+  selectedId = null,
   onSelectPin,
+  height,
 }: {
   city: City;
+  places: Place[];
+  selectedId?: string | null;
+  onSelectPin?: (placeId: string | null) => void;
   height?: number;
-  onSelectPin?: (placeId: string) => void;
 }) {
-  return <MapCanvas city={city} height={height} onSelectPin={onSelectPin} />;
+  return (
+    <MapCanvas
+      city={city}
+      places={places}
+      selectedId={selectedId}
+      onSelectPin={onSelectPin}
+      height={height}
+    />
+  );
 }

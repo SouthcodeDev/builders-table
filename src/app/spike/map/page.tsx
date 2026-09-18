@@ -21,7 +21,7 @@ export default function MapSpike() {
           ))}
         </div>
       </div>
-      <MapView city={city} height={420} />
+      <MapView city={city} places={placesIn(city)} height={420} />
       <p className="text-xs text-ink-60">
         {placesIn(city).length} seeded pins · centre {CITIES[city].label}
       </p>

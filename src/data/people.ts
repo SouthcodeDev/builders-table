@@ -43,55 +43,57 @@ export const ACTIVE_PERSONA: Persona = {
 
 /** Demo 2's deck order and reason lines. Pre-written — the deck never calls the model. */
 export const ACTIVE_RANKED: { eventId: string; reason: string }[] = [
-  { eventId: 'ct-golden-hour-6k', reason: 'Early miles, then coffee — the usual shape of your day.' },
-  { eventId: 'ct-contour-path', reason: 'Another early outdoor start, which you keep saying yes to.' },
-  { eventId: 'ct-woodstock-open-studio', reason: 'Starts within the hour, and it is practically next door.' },
-  { eventId: 'ct-oranjezicht-market', reason: 'Coffee and produce with the mountain right there.' },
-  { eventId: 'ct-obz-open-mic', reason: 'For the nights you stay out past nine.' },
-  { eventId: 'ct-kalk-bay-swim', reason: 'Cold water is a big ask. It is here anyway.' },
+  { eventId: 'ct-run-promenade', reason: 'Your usual hour, and the promenade after — the easy yes.' },
+  { eventId: 'ct-kloof-corner', reason: 'Golden hour on the mountain — early starts keep showing up for you.' },
+  { eventId: 'ct-clay-hands', reason: 'Starts within the hour, and it is walking distance from here.' },
+  { eventId: 'ct-sanlam-marathon', reason: 'The big one. You keep circling races like this.' },
+  { eventId: 'ct-newlands-forest', reason: 'Another early one through the trees.' },
+  { eventId: 'ct-flow-lab', reason: 'A Friday reset before the weekend takes over.' },
+  { eventId: 'ct-first-thursdays', reason: 'For the nights you stay out on the streets.' },
+  { eventId: 'ct-silvermine', reason: 'A longer walk, if the morning is free.' },
 ]
 
 /** Who else is going to what — drives the avatar stacks on Discover and Event detail. */
 export const ATTENDANCE: Record<string, string[]> = {
-  'ct-golden-hour-6k': ['nandi', 'thabo', 'aisha'],
-  'ct-obz-open-mic': ['thabo'],
-  'ct-oranjezicht-market': ['aisha'],
+  'ct-run-promenade': ['nandi', 'thabo', 'aisha'],
+  'ct-obz-quiz-night': ['thabo'],
+  'ct-first-thursdays': ['aisha'],
 }
 
 /** Total head-count fiction for judge mode, where no friends exist. */
 export const ATTENDANCE_BASE: Record<string, number> = {
-  'ct-golden-hour-6k': 14,
-  'ct-woodstock-open-studio': 9,
-  'ct-kalk-bay-swim': 6,
-  'ct-obz-open-mic': 22,
-  'ct-oranjezicht-market': 30,
-  'ct-contour-path': 11,
+  'ct-run-promenade': 14,
+  'ct-clay-hands': 9,
+  'ct-obz-quiz-night': 22,
+  'ct-first-thursdays': 30,
+  'ct-sanlam-marathon': 40,
+  'ct-kloof-corner': 11,
 }
 
 /** Ameer's device sees this instead of Sam's plans. */
 export const AMEER_PLANS: Omit<Plan, 'createdAtMs'>[] = [
-  { id: 'ameer-plan-1', placeId: 'ct-golden-hour-6k', withPeople: [], status: 'going' },
+  { id: 'ameer-plan-1', placeId: 'ct-run-promenade', withPeople: [], status: 'going' },
 ]
 
 /** Demo 2's existing schedule. createdAtMs is filled at load — see seed.ts. */
 export const ACTIVE_PLANS: Omit<Plan, 'createdAtMs'>[] = [
-  { id: 'plan-1', placeId: 'ct-golden-hour-6k', withPeople: ['nandi', 'thabo'], status: 'going' },
-  { id: 'plan-2', placeId: 'ct-obz-open-mic', withPeople: [], status: 'going' },
-  { id: 'plan-3', placeId: 'ct-oranjezicht-market', withPeople: ['aisha'], status: 'going' },
-  { id: 'plan-4', placeId: 'ct-kalk-bay-swim', withPeople: [], status: 'saved' },
+  { id: 'plan-1', placeId: 'ct-run-promenade', withPeople: ['nandi', 'thabo'], status: 'going' },
+  { id: 'plan-2', placeId: 'ct-obz-quiz-night', withPeople: [], status: 'going' },
+  { id: 'plan-3', placeId: 'ct-first-thursdays', withPeople: ['aisha'], status: 'going' },
+  { id: 'plan-4', placeId: 'ct-garys-surf-school', withPeople: [], status: 'saved' },
 ]
 
 export const ACTIVE_PASSPORT: Passport = {
   stats: { places: 31, withFriends: 9, cities: 2 },
   note: 'Four Fridays in a row you went outside.',
   stamps: [
-    { title: 'Golden hour 6k', dateLabel: 'Sep 12', image: '/images/golden-hour-6k.jpg' },
-    { title: 'Contour path', dateLabel: 'Sep 06', image: '/images/contour-path.jpg' },
-    { title: 'Bo-Kaap market', dateLabel: 'Aug 31', image: '/images/oranjezicht-market.jpg' },
-    { title: 'Izakaya alley', dateLabel: 'Aug 24', image: '/images/shimokita-records.jpg' },
-    { title: 'Long table', dateLabel: 'Aug 17', image: '/images/nakameguro-coffee.jpg' },
-    { title: 'Four bands', dateLabel: 'Aug 09', image: '/images/obz-open-mic.jpg' },
+    { title: 'Run the promenade', dateLabel: 'Sep 12', image: '/images/run-promenade.jpg' },
+    { title: 'Kloof Corner', dateLabel: 'Sep 06', image: '/images/kloof-corner.jpg' },
+    { title: 'First Thursdays', dateLabel: 'Aug 31', image: '/images/first-thursdays.jpg' },
+    { title: 'Clay Hands', dateLabel: 'Aug 24', image: '/images/clay-hands.jpg' },
+    { title: 'Flow Lab', dateLabel: 'Aug 17', image: '/images/flow-lab.jpg' },
+    { title: 'Quiz night in Obz', dateLabel: 'Aug 09', image: '/images/obz-quiz.jpg' },
   ],
   stampsMore: 25,
-  nextStamp: { title: 'Golden hour 6k', when: 'Tonight 18:30' },
+  nextStamp: { title: 'Run the promenade', when: 'Tonight 18:00' },
 }

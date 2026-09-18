@@ -16,6 +16,8 @@ export type CityMeta = {
   tz: string // IANA
   center: { lat: number; lng: number }
   zoom: number
+  /** maxBounds for the map — a stray drag can't leave the city. */
+  bounds: [[number, number], [number, number]]
   areas: string[] // fixed list — powers area filtering with NO geocoding API
 }
 
@@ -27,6 +29,10 @@ export const CITIES: Record<City, CityMeta> = {
     // Woodstock — the venue, and the geolocation-denied fallback centre.
     center: { lat: -33.927, lng: 18.447 },
     zoom: 12.2,
+    bounds: [
+      [18.25, -34.2],
+      [18.7, -33.75],
+    ],
     areas: [
       'Woodstock', 'Observatory', 'Salt River', 'City Bowl', 'Sea Point',
       'Green Point', 'Gardens', 'Kalk Bay', 'Muizenberg', 'Oranjezicht',
@@ -39,6 +45,10 @@ export const CITIES: Record<City, CityMeta> = {
     tz: 'Asia/Tokyo',
     center: { lat: 35.6762, lng: 139.6503 },
     zoom: 11.5,
+    bounds: [
+      [139.5, 35.55],
+      [139.85, 35.85],
+    ],
     areas: [
       'Shibuya', 'Shinjuku', 'Nakameguro', 'Shimokitazawa', 'Asakusa',
       'Kichijoji', 'Yanaka', 'Daikanyama',

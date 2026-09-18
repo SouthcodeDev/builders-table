@@ -57,9 +57,6 @@ export default function DiscoverPage() {
 
   const pinPlace = pinId ? placeById(pinId) : null;
 
-  // Tokyo — the "one more thing". Izakaya crawl leads; the read carries over.
-  const izakaya = city === "tokyo" ? placeById("tk-izakaya-alley") : undefined;
-  const tokyoList = izakaya ? [izakaya, ...events.filter((p) => p.id !== izakaya.id)] : events;
   const tokyoClock = city === "tokyo"
     ? new Intl.DateTimeFormat("en-GB", {
         timeZone: "Asia/Tokyo",
@@ -90,18 +87,29 @@ export default function DiscoverPage() {
             </h1>
           </div>
           <div className="flex min-h-0 flex-1 flex-col gap-3.5 overflow-y-auto pb-4 pt-4">
-            {tokyoList.map((p, i) => (
-              <EventCard
-                key={p.id}
-                place={p}
-                distanceKm={distanceTo(p)}
-                attendance={attendanceFor(p.id)}
-                variant={i === 0 ? "featured" : "compact"}
-                timePill={i === 0 ? `${formatLocal(p)} JST` : undefined}
-                subline={i === 0 ? p.blurb : undefined}
-                onPress={() => router.push(`/place/${p.id}`)}
-              />
-            ))}
+            {events.length === 0 ? (
+              <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
+                <p className="text-[19px] font-medium tracking-[-0.015em]">
+                  {COPY.discover.emptyTitle}
+                </p>
+                <p className="max-w-[260px] text-sm leading-[1.5] text-ink-50">
+                  {COPY.discover.emptySub}
+                </p>
+              </div>
+            ) : (
+              events.map((p, i) => (
+                <EventCard
+                  key={p.id}
+                  place={p}
+                  distanceKm={distanceTo(p)}
+                  attendance={attendanceFor(p.id)}
+                  variant={i === 0 ? "featured" : "compact"}
+                  timePill={i === 0 ? `${formatLocal(p)} JST` : undefined}
+                  subline={i === 0 ? p.blurb : undefined}
+                  onPress={() => router.push(`/place/${p.id}`)}
+                />
+              ))
+            )}
             <div className="flex items-center gap-3 rounded-big bg-canvas-soft p-4">
               <span className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full bg-hero">
                 <LogoMark size={16} color="#FFFFFF" />
@@ -219,7 +227,12 @@ export default function DiscoverPage() {
           ) : (
             <div className="relative flex min-h-0 flex-1 flex-col px-4 pb-4 pt-3">
               <div className="relative min-h-0 flex-1 overflow-hidden rounded-big">
-                <MapView city={city} onSelectPin={setPinId} />
+                <MapView
+                  city={city}
+                  places={events}
+                  selectedId={pinId}
+                  onSelectPin={setPinId}
+                />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-big bg-white/95 p-4 shadow-sheet">
                   <p className="text-[10px] font-medium tracking-[0.08em] text-muted">
                     {COPY.discover.pinHint}

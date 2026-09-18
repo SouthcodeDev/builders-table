@@ -136,9 +136,9 @@ export const COPY = {
     areaMeta: (on: number, km: number) => `${on} on · ${km} km`,
     radiusHeading: 'Radius',
     radiusOptions: [
-      { km: 2, label: '2 km' },
+      { km: 3, label: '3 km' },
       { km: 6, label: '6 km' },
-      { km: 15, label: '15 km' },
+      { km: 10, label: '10 km' },
       { km: null, label: 'Any' },
     ] as const,
     cta: (area: string, km: number | null) =>
