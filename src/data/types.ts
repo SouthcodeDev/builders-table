@@ -86,7 +86,7 @@ export type Place = {
   image: string
   /** Unsplash photographer name — licence condition. */
   imageCredit: string
-  /** Where "Let's go Places" sends you, if different from the pin. */
+  /** Where "Let's Bounce" sends you, if different from the pin. */
   mapsLat?: number
   mapsLng?: number
   /** Reference link from curation. Not rendered; kept so you can re-verify. */

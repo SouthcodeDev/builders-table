@@ -81,7 +81,7 @@ export const COPY = {
     going: "I'm going",
     goingIn: "I'm in",
     plan: 'Invite friends',
-    directions: "Let's go Places",
+    directions: "Let's Bounce",
     startsIn: (m: number) => (m < 60 ? `Starts in ${m} min` : `Starts in ${Math.round(m / 60)} hrs`),
   },
   invite: {
@@ -109,7 +109,7 @@ export const COPY = {
     yours: 'Already yours',
   },
   passport: {
-    stats: ['Places', 'With friends', 'Cities'] as const,
+    stats: ['Visits', 'With friends', 'Cities'] as const,
     stampsLabel: 'Stamps',
     more: (n: number) => `+${n}`,
     nextKicker: 'Next stamp',

@@ -177,7 +177,7 @@ export default function DiscoverPage() {
                     </span>
                   </span>
                   <span className="grid h-[38px] w-[38px] shrink-0 place-items-center rounded-full bg-surface">
-                    <LogoMark size={18} color="#FF4A00" />
+                    <LogoMark size={20} />
                   </span>
                 </button>
               </div>

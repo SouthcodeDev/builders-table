@@ -19,7 +19,7 @@ export function formatDistance(km: number): string {
 }
 
 /**
- * "Let's go Places" — the closing beat. Platform-sniffed deep link.
+ * "Let's Bounce" — the closing beat. Platform-sniffed deep link.
  * Never use geo: — Android only.
  * TEST THIS FROM THE INSTALLED PWA, NOT SAFARI. See SETUP.md Gate 4.
  */
