@@ -3,12 +3,25 @@
 // The voice is the product. Warmth through words, not mascots. The app's job is to
 // end the session: several of these strings actively tell the user to leave.
 // Strings follow the Places4 screen handoff; do not let an agent "improve" them.
+//
+// MERGE NOTE (FIXES.md §2). FIXES said "where wording differs, the dropped version
+// wins". It was not applied, because the dropped file is demonstrably the EARLIER
+// draft, not the later one:
+//   · its wordmark is 'places' and its CTA 'Explore Places'; the Phase-4 screen
+//     handoff ("Places4 - Screens.dc.html") says 'bounce' / 'Jump In'
+//   · it has no appleDoor, no deck end block, no passport, location, handoff or
+//     Tokyo copy — all of which are on screen today and in the handoff set
+//   · every string it has that differs is a screen the handoff set redrew
+// Taking it would have regressed live screens away from the design. The keys it had
+// that nothing renders (signIn.emailDoor, discover.loadingTitle/Sub, deck.hint,
+// plans.subSome, invite.close, persona.reject) were left out rather than added as
+// dead strings — see AGENTS.md §1.1.
 
 export const COPY = {
   splash: {
-    wordmark: 'places',
+    wordmark: 'bounce',
     line: 'Get out, off your phone and to the places that make you feel alive.',
-    cta: 'Explore Places',
+    cta: 'Jump In',
   },
   signIn: {
     title: 'Come in.',
@@ -31,19 +44,21 @@ export const COPY = {
     sub: "Not a personality test — just working out what you'd actually get up for.",
   },
   persona: {
-    kicker: 'Your evening shape',
+    kicker: (labels: string[]) =>
+      labels.length > 0 ? `${labels.join(', ')} said yes to` : 'Your picks said yes to',
     accept: 'Show me tonight',
     footnote: "This shifts every time you say yes or no to something — it's a read, not a label.",
   },
   discover: {
-    findForMe: 'Find places for me',
-    findForMeSub: 'Six picks, about a minute',
+    findForMe: "What's Bouncing?",
+    findForMeSub: 'Six picks, new to you',
     nearbyHeading: "What's on near you",
     radiusLabel: (km: number | null) => (km == null ? 'ANY DISTANCE' : `WITHIN ${km} KM`),
     feedTab: 'Feed',
     mapTab: 'Map',
     pinHint: 'TAP A PIN FOR DETAIL',
-    pinSummary: (n: number) => `${n} things within range`,
+    pinSummary: (n: number, km: number | null) =>
+      km == null ? `${n} things within range` : `${n} things within ${km} km`,
     emptyTitle: 'Quiet night out there.',
     emptySub:
       'Nothing within range worth leaving the house for. Tomorrow evening looks much better.',
@@ -52,7 +67,6 @@ export const COPY = {
   deck: {
     close: 'Close',
     counter: (i: number, total: number) => `${i} OF ${total}`,
-    hint: 'Swipe right for yes, left to pass',
     save: 'Save for later',
     pass: 'Pass',
     yes: 'Yes',

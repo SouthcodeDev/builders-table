@@ -1,6 +1,6 @@
 "use client";
 
-import { COPY, formatDayLabel, formatLocal, type Attendance, type Place } from "@/data/seed";
+import { formatDayLabel, formatLocal, type Attendance, type Place } from "@/data/seed";
 import { formatDistance } from "@/data/geo";
 import { AvatarStack } from "./avatar-stack";
 
@@ -31,7 +31,7 @@ export function DeckCard({
       className="photo absolute inset-0 overflow-hidden rounded-deckcard bg-ink shadow-deckcard"
       style={{ backgroundImage: `url(${place.image})` }}
     >
-      <span className="absolute inset-0 bg-gradient-to-t from-[rgba(8,7,14,0.92)] via-[rgba(8,7,14,0.35)_45%] to-[rgba(8,7,14,0.05)]" />
+      <span className="scrim-card absolute inset-0" />
       <span className="absolute inset-x-4.5 bottom-4 flex flex-col gap-2.5">
         <span className="text-[11px] font-medium uppercase tracking-[0.06em] text-white/75">
           {meta}
@@ -57,7 +57,6 @@ export function DeckCard({
           </span>
         )}
       </span>
-      <span className="sr-only">{COPY.deck.hint}</span>
     </div>
   );
 }

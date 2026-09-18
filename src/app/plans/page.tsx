@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { CalendarDays } from "lucide-react";
 import { COPY, personById, placeById } from "@/data/seed";
 import { InviteReceivedCard } from "@/components/invite-received-card";
 import { PlanRow } from "@/components/plan-row";
@@ -9,7 +9,6 @@ import { TabBar } from "@/components/tab-bar";
 import { usePlaces } from "@/state/places";
 
 export default function PlansPage() {
-  const router = useRouter();
   const {
     ready, plans, pendingInvite, distanceTo, acceptInvite, declineInvite, pollInvites,
     simulateIncomingInvite,
@@ -73,7 +72,7 @@ export default function PlansPage() {
           {ordered.length === 0 && !pendingInvite ? (
             <div className="flex flex-1 flex-col items-center justify-center gap-4 px-5 text-center">
               <span className="grid h-16 w-16 place-items-center rounded-full bg-canvas-soft">
-                <span className="block h-[22px] w-[22px] rounded-md border-2 border-muted" />
+                <CalendarDays size={24} strokeWidth={1.75} className="text-muted" aria-hidden />
               </span>
               <p className="text-[19px] font-medium tracking-[-0.015em]">
                 {COPY.plans.emptyTitle}
@@ -81,12 +80,6 @@ export default function PlansPage() {
               <p className="max-w-[240px] text-sm leading-[1.5] text-ink-50">
                 {COPY.plans.emptySub}
               </p>
-              <button
-                onClick={() => router.push("/discover")}
-                className="button mt-1 bg-canvas px-6 py-3 text-[13px] font-medium text-ink"
-              >
-                {COPY.plans.emptyCta}
-              </button>
             </div>
           ) : (
             ordered.map((plan) => {

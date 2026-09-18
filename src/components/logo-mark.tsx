@@ -1,26 +1,23 @@
+// The bounce mark — three tilted pills. Geometry from the Places4 handoff.
 export function LogoMark({
-  size = 18,
-  color = "currentColor",
-  dotColor = "#FFFFFF",
+  size = 62,
+  color = "#FF4A00",
 }: {
   size?: number;
   color?: string;
-  dotColor?: string;
 }) {
   return (
     <svg
       width={size}
-      height={size * 0.82}
-      viewBox="0 0 22 18"
+      height={(size * 50) / 62}
+      viewBox="0 0 62 50"
       fill="none"
       aria-hidden
       style={{ flexShrink: 0 }}
     >
-      <path
-        d="M11 0.5C6.3 0.5 2.8 3.9 2.8 8.2c0 5.5 8.2 9.3 8.2 9.3s8.2-3.8 8.2-9.3C19.2 3.9 15.7 0.5 11 0.5Z"
-        fill={color}
-      />
-      <circle cx="11" cy="7.9" r="2.9" fill={dotColor} />
+      <rect x="12" y="2" width="15" height="18" rx="7.5" fill={color} transform="rotate(-12 19.5 11)" />
+      <rect x="34" y="16" width="15" height="17" rx="7.5" fill={color} transform="rotate(-12 41.5 24.5)" />
+      <rect x="12" y="30" width="15" height="18" rx="7.5" fill={color} transform="rotate(-12 19.5 39)" />
     </svg>
   );
 }

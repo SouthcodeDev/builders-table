@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { AppleMark, GoogleMark } from "@/components/brand-marks";
 import { COPY } from "@/data/seed";
 import { usePlaces } from "@/state/places";
 
@@ -29,28 +30,27 @@ export default function SignInPage() {
         <div className="mt-6 flex flex-col gap-2.5">
           <button
             onClick={() => enter("active")}
-            className="button flex h-[54px] items-center justify-center gap-2.5 bg-ink text-base font-medium text-white"
+            className="button flex h-[54px] w-full items-center justify-center gap-2.5 bg-ink text-base font-medium text-white"
           >
-            <span className="h-[15px] w-[15px] rounded-[4px] bg-surface" />
+            <AppleMark />
             {COPY.signIn.appleDoor}
           </button>
           <button
             onClick={() => enter("active")}
-            className="button flex h-[54px] items-center justify-center gap-2.5 border-[1.5px] border-ink-16 bg-surface text-base font-medium"
+            className="button flex h-[54px] w-full items-center justify-center gap-2.5 border-[1.5px] border-ink-16 bg-surface text-base font-medium"
           >
-            <span className="h-4 w-4 rounded-full bg-accent" />
+            <GoogleMark />
             {COPY.signIn.googleDoor}
           </button>
           <button
             onClick={() => enter("judge")}
-            className="h-[50px] text-base font-medium text-hero"
+            className="h-[50px] w-full text-base font-medium text-hero"
           >
             {COPY.signIn.judgeDoor}
           </button>
           <p className="px-5 pt-2 text-center text-xs leading-[1.5] text-ink-42">
             {COPY.signIn.footnote}
           </p>
-          <div className="home-indicator mx-auto mt-3" />
         </div>
       </div>
     </main>

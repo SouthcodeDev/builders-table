@@ -44,3 +44,6 @@ next-env.d.ts
 # commercial font originals — converted woff2 copies live in /public/fonts
 /font-src
 *.otf
+
+# one-off audit output — regenerate with `node scripts/audit.mjs`, never commit
+/AUDIT.md

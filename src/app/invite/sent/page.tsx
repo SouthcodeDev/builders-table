@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Check } from "lucide-react";
 import { COPY } from "@/data/seed";
 import { usePlaces } from "@/state/places";
 
@@ -13,7 +14,7 @@ export default function InviteSentPage() {
     <main className="flex min-h-dvh flex-1 flex-col bg-surface px-7 pt-safe pb-safe">
       <div className="flex flex-1 flex-col items-center justify-center gap-[22px] text-center">
         <span className="grid h-[78px] w-[78px] place-items-center rounded-full bg-canvas-soft">
-          <span className="block h-6 w-4 -translate-y-px -rotate-45 border-x-[3px] border-b-[3px] border-hero" />
+          <Check size={32} strokeWidth={2.75} className="text-hero" aria-hidden />
         </span>
         <h1 className="text-[26px] font-medium leading-[1.2] tracking-[-0.02em]">
           {COPY.invite.sentTitle(name)}

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { TAGS, placeById, type Tag } from '@/data/seed'
+import { INTEREST_TAGS, placeById, type InterestTag } from '@/data/seed'
 
 // SETUP.md Step 9 — the only server code in the app. No "use client".
 
@@ -16,21 +16,30 @@ type Candidate = {
 
 type Body = { interests?: unknown; city?: unknown; candidates?: unknown }
 
+// The model receives IDs and returns IDs plus prose. It never returns a tag, and
+// nothing it returns is treated as a fact — AGENTS.md §1.5, §1.6.
 const SYSTEM_PROMPT = [
   'You curate a shortlist of real local events for someone, in their voice.',
   'Return only JSON matching this schema:',
   '{"label": string, "sentence": string, "ranked": [{"eventId": string, "reason": string}]}',
   'Select only from the supplied event IDs. Never invent an event, time, price or place.',
+  'Never invent a tag. The only interests that exist are:',
+  INTEREST_TAGS.join(', ') + '.',
   'Rank all candidates best-first. reason lines are one sentence, under 15 words.',
   'label is two or three words. sentence is one warm sentence about their taste.',
 ].join(' ')
 
-function isTag(v: string): v is Tag {
-  return (TAGS as readonly string[]).includes(v)
+/**
+ * Ranking matches on the twelve onboarding chips only (src/data/vocab.ts). A detail
+ * tag arriving here is dropped rather than trusted — it is never a chip, so it can
+ * never legitimately be something the user picked.
+ */
+function isInterest(v: string): v is InterestTag {
+  return (INTEREST_TAGS as readonly string[]).includes(v)
 }
 
 function localFallback(
-  interests: Tag[],
+  interests: InterestTag[],
   candidates: Candidate[],
 ): {
   label: string
@@ -39,13 +48,13 @@ function localFallback(
 } {
   const ranked = [...candidates]
     .map((c) => {
-      const overlap = c.tags.filter((t) => interests.includes(t as Tag)).length
+      const overlap = c.tags.filter((t) => interests.includes(t as InterestTag)).length
       const soonness = c.startOffset < 0 ? -1000 : Math.max(0, 600 - c.startOffset) / 600
       return { c, score: overlap * 10 + soonness }
     })
     .sort((a, b) => b.score - a.score)
     .map(({ c }) => {
-      const hit = c.tags.find((t) => interests.includes(t as Tag))
+      const hit = c.tags.find((t) => interests.includes(t as InterestTag))
       const reason = hit
         ? `You said you're into ${hit.replace('-', ' ')}.`
         : 'Close by, and on tonight.'
@@ -67,7 +76,7 @@ export async function POST(request: Request) {
   }
 
   const interests = Array.isArray(body.interests)
-    ? body.interests.filter((t): t is Tag => typeof t === 'string' && isTag(t))
+    ? body.interests.filter((t): t is InterestTag => typeof t === 'string' && isInterest(t))
     : []
   const candidates = Array.isArray(body.candidates)
     ? (body.candidates as Candidate[]).filter(

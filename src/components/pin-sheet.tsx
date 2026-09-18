@@ -1,9 +1,9 @@
 "use client";
 
+import { Navigation } from "lucide-react";
 import { COPY, formatDayLabel, formatLocal, type Attendance, type Place } from "@/data/seed";
 import { formatDistance } from "@/data/geo";
 import { AvatarStack } from "./avatar-stack";
-import { LogoMark } from "./logo-mark";
 
 export function PinSheet({
   place,
@@ -64,7 +64,7 @@ export function PinSheet({
       <div className="mt-3.5 flex gap-2.5">
         <button
           onClick={onGoing}
-          className="button flex h-[50px] flex-1 items-center justify-center bg-hero text-[15px] font-medium text-white shadow-hero"
+          className="button flex h-[50px] flex-1 items-center justify-center bg-pop text-[15px] font-medium text-white shadow-pop"
         >
           {COPY.event.goingIn}
         </button>
@@ -73,7 +73,7 @@ export function PinSheet({
           aria-label={COPY.event.directions}
           className="grid h-[50px] w-[50px] place-items-center rounded-full border-[1.5px] border-ink-16"
         >
-          <LogoMark size={15} color="#3552E0" dotColor="transparent" />
+          <Navigation size={18} strokeWidth={2} className="text-hero" aria-hidden />
         </button>
       </div>
     </div>

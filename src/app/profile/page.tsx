@@ -25,7 +25,7 @@ export default function ProfilePage() {
         {passport ? (
           <>
             <div className="flex items-center gap-3.5 pt-1">
-              <span className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-full bg-hero-deep text-base font-medium text-white">
+              <span className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-full bg-pop text-base font-medium text-white">
                 {initials}
               </span>
               <div className="min-w-0 flex-1">
@@ -98,7 +98,7 @@ export default function ProfilePage() {
         {/* Tokyo / city switch — the "one more thing" */}
         <div className="mt-4 mb-3 flex items-center gap-3 rounded-big bg-canvas p-4 text-left">
           <span className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full bg-hero text-white">
-            <LogoMark size={16} />
+            <LogoMark size={16} color="#FFFFFF" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="kicker">{inTokyo ? COPY.tokyo.back : COPY.tokyo.entryKicker}</p>

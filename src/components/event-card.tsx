@@ -10,19 +10,25 @@ export function EventCard({
   distanceKm,
   attendance,
   variant = "compact",
+  timePill,
+  subline,
   onPress,
 }: {
   place: Place;
   distanceKm: number;
   attendance: Attendance;
   variant?: "featured" | "compact";
+  /** Replaces the "Starts in…" pill with a plain clock pill (Tokyo treatment). */
+  timePill?: string;
+  /** Extra body line under the title. */
+  subline?: string;
   onPress: () => void;
 }) {
   const featured = variant === "featured";
   const mins = minutesUntil(place);
-  const showStartsPill = featured && isStartingSoon(place, 120);
+  const showStartsPill = featured && !timePill && isStartingSoon(place, 120);
   const meta = [
-    formatDayLabel(place),
+    timePill ? null : formatDayLabel(place),
     formatLocal(place),
     formatDistance(distanceKm),
     place.price ?? null,
@@ -47,6 +53,11 @@ export function EventCard({
           {COPY.event.startsIn(mins)}
         </span>
       )}
+      {timePill && (
+        <span className="absolute left-3 top-3 rounded-full bg-[rgba(10,10,10,0.74)] px-3 py-1.5 text-[11px] font-medium text-white">
+          {timePill}
+        </span>
+      )}
       <span className="absolute inset-x-3.5 bottom-3 flex flex-col gap-1.5">
         <span className="text-[11px] font-medium uppercase tracking-[0.06em] text-white/80">
           {meta}
@@ -58,6 +69,7 @@ export function EventCard({
         >
           {place.title}
         </span>
+        {subline && <span className="text-xs leading-[1.4] text-white/80">{subline}</span>}
         {attending ? (
           <span className="pt-0.5">
             <AvatarStack

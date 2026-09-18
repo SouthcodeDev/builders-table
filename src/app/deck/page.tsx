@@ -5,6 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from "motion/react";
 import { useDrag } from "@use-gesture/react";
 import { COPY, weekday, type Place } from "@/data/seed";
+import { AvatarStack } from "@/components/avatar-stack";
 import { DeckCard } from "@/components/deck-card";
 import { usePlaces } from "@/state/places";
 
@@ -75,7 +76,7 @@ export default function DeckPage() {
   );
 
   if (!ready) {
-    return <main className="min-h-dvh flex-1 bg-deck" />;
+    return <main className="min-h-dvh flex-1 bg-hero" />;
   }
 
   const seen = deckEvents.length - remaining.length;
@@ -96,7 +97,7 @@ export default function DeckPage() {
   const planTarget = yeses.find((p) => attendanceFor(p.id).friends.length > 0) ?? yeses[0];
 
   return (
-    <main className="flex min-h-dvh flex-1 flex-col bg-deck px-5 pt-safe pb-safe text-white">
+    <main className="flex min-h-dvh flex-1 flex-col bg-hero px-5 pt-safe pb-safe text-white">
       {done ? (
         <>
           <div className="mt-[60px] flex flex-col gap-3.5">
@@ -108,42 +109,42 @@ export default function DeckPage() {
             </h1>
           </div>
           <div className="mt-6 flex flex-col gap-2.5">
-            {yeses.map((p) => (
-              <div
-                key={p.id}
-                className="flex items-center gap-3 rounded-tile bg-white/10 p-3"
-              >
-                <span
-                  className="photo h-11 w-11 shrink-0 rounded-[10px]"
-                  style={{ backgroundImage: `url(${p.image})` }}
-                />
-                <span className="min-w-0 flex-1 text-sm">{p.title}</span>
-              </div>
-            ))}
+            {yeses.map((p) => {
+              const going = attendanceFor(p.id).friends;
+              return (
+                <div
+                  key={p.id}
+                  className="flex items-center gap-3 rounded-tile bg-white/10 p-3"
+                >
+                  <span
+                    className="photo h-11 w-11 shrink-0 rounded-[10px]"
+                    style={{ backgroundImage: `url(${p.image})` }}
+                  />
+                  <span className="min-w-0 flex-1 text-sm">{p.title}</span>
+                  {mode === "active" && going.length > 0 && (
+                    <AvatarStack people={going} size={20} />
+                  )}
+                </div>
+              );
+            })}
           </div>
           <div className="mt-auto flex flex-col gap-3">
             <p className="text-sm leading-[1.5] text-white/60">{COPY.deck.endFootnote}</p>
             {mode === "active" && planTarget ? (
               <button
                 onClick={() => router.push(`/place/${planTarget.id}`)}
-                className="button flex h-[54px] items-center justify-center bg-surface text-base font-medium text-hero-deep"
+                className="button flex h-[54px] w-full items-center justify-center bg-surface text-base font-medium text-hero"
               >
                 Plan the one with {firstNameFriend ?? "someone"}
               </button>
             ) : (
               <button
                 onClick={() => router.push("/")}
-                className="button flex h-[54px] items-center justify-center bg-surface text-base font-medium text-hero-deep"
+                className="button flex h-[54px] w-full items-center justify-center bg-surface text-base font-medium text-hero"
               >
                 {COPY.deck.endClose}
               </button>
             )}
-            <button
-              onClick={() => router.push("/discover")}
-              className="h-6 text-[13px] text-white/50"
-            >
-              {COPY.deck.endBack}
-            </button>
           </div>
         </>
       ) : (
@@ -169,7 +170,7 @@ export default function DeckPage() {
 
           <div className="relative mt-[22px] min-h-0 flex-1">
             {behind[1] && (
-              <div className="absolute inset-x-[22px] bottom-[26px] top-4 rounded-deckcard bg-hero-deep" style={{ transform: "rotate(-3deg)" }} />
+              <div className="absolute inset-x-[22px] bottom-[26px] top-4 rounded-deckcard bg-deck-deep" style={{ transform: "rotate(-3deg)" }} />
             )}
             {behind[0] && (
               <div className="absolute inset-x-3 bottom-[18px] top-2 rounded-deckcard bg-deck-card" style={{ transform: "rotate(1.6deg)" }} />
@@ -213,21 +214,17 @@ export default function DeckPage() {
             </button>
             <button
               onClick={() => commit("yes")}
-              className="grid h-[62px] w-[62px] place-items-center rounded-full bg-hero text-sm font-medium text-white shadow-hero"
+              className="grid h-[62px] w-[62px] place-items-center rounded-full bg-surface text-sm font-medium text-hero shadow-[0_14px_26px_-12px_rgba(81,0,255,0.9)]"
             >
               {COPY.deck.yes}
             </button>
           </div>
-          <p className="mt-[18px] text-center text-[13px] leading-[1.4] text-white/50">
-            {pastThreshold ? (
-              <>
-                <span className="text-white/90">{COPY.deck.releaseYes}</span>{" "}
-                {COPY.deck.releaseNote}
-              </>
-            ) : (
-              COPY.deck.hint
-            )}
-          </p>
+          {pastThreshold && (
+            <p className="mt-[18px] text-center text-[13px] leading-[1.4] text-white/50">
+              <span className="text-white/90">{COPY.deck.releaseYes}</span>{" "}
+              {COPY.deck.releaseNote}
+            </p>
+          )}
         </>
       )}
     </main>

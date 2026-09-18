@@ -1,3 +1,11 @@
+// types.ts — the shape of everything curated.
+//
+// MERGED, not blind-replaced (FIXES.md §2). The dropped types.ts carried one real
+// delta — Place.address — plus an OLDER draft of Passport/PassportStamp and no
+// Attendance type. The passport screen and the Phase-4 screen handoff both use the
+// {places, withFriends, cities} + note + image-stamp shape kept below, so taking the
+// dropped file wholesale would have regressed a working screen.
+
 import type { Tag } from './vocab'
 
 export type City = 'cape-town' | 'tokyo'
@@ -61,6 +69,12 @@ export type Place = {
   title: string
   /** One or two sentences. Rendered verbatim — the model never rewrites this. */
   blurb: string
+  /**
+   * Street address as curated. Displayed on event detail; also how the coordinates
+   * were found (docs/CURATION.md §1). Empty string only on the pre-curation
+   * placeholder rows in places.ts — never render an empty address.
+   */
+  address: string
   lat: number
   lng: number
   schedule: Schedule

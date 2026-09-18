@@ -2,8 +2,8 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Navigation } from "lucide-react";
 import { COPY, directionsUrl, minutesUntil, placeById } from "@/data/seed";
-import { LogoMark } from "@/components/logo-mark";
 
 export default function GoPage() {
   const router = useRouter();
@@ -38,7 +38,7 @@ export default function GoPage() {
     <main className="flex min-h-dvh flex-1 flex-col bg-hero px-7 pt-safe pb-safe text-white">
       <div className="flex flex-1 flex-col items-center justify-center gap-[22px] text-center">
         <span className="grid h-16 w-16 place-items-center rounded-full bg-white/16">
-          <span className="block h-[22px] w-[22px] rounded-[50%_0] border-[2.5px] border-white" />
+          <Navigation size={26} strokeWidth={2} className="text-white" aria-hidden />
         </span>
         <h1 className="text-[30px] font-medium leading-[1.15] tracking-[-0.02em]">
           {COPY.handoff.title(minutesUntil(place))}
@@ -46,7 +46,6 @@ export default function GoPage() {
         <p className="max-w-[250px] text-[15px] leading-[1.5] text-white/75">
           {COPY.handoff.sub}
         </p>
-        <LogoMark size={22} color="rgba(255,255,255,0.4)" />
       </div>
     </main>
   );

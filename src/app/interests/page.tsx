@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { COPY, INTEREST_CHIPS, type Tag } from "@/data/seed";
+import { COPY, INTEREST_CHIPS, type InterestTag } from "@/data/seed";
 import { InterestTile } from "@/components/interest-tile";
 import { usePlaces } from "@/state/places";
 
@@ -11,7 +11,7 @@ export default function InterestsPage() {
   const { interests, setInterests, requestPersona } = usePlaces();
   const [sending, setSending] = useState(false);
 
-  const toggle = (tag: Tag) =>
+  const toggle = (tag: InterestTag) =>
     setInterests(
       interests.includes(tag) ? interests.filter((t) => t !== tag) : [...interests, tag],
     );
@@ -29,7 +29,7 @@ export default function InterestsPage() {
     <main className="flex min-h-dvh flex-1 flex-col bg-surface px-5 pt-safe pb-safe">
       <div className="mt-5 flex items-center gap-3">
         <div className="h-[3px] min-w-0 flex-1 overflow-hidden rounded-full bg-track">
-          <div className="h-full w-1/2 bg-hero-deep" />
+          <div className="h-full w-1/2 bg-pop" />
         </div>
         <span className="text-xs text-muted">{COPY.interests.step}</span>
         <button
@@ -45,7 +45,14 @@ export default function InterestsPage() {
         </h1>
         <p className="mt-1.5 text-sm text-ink-50">{COPY.interests.sub}</p>
       </div>
-      <div className="mt-[18px] grid grid-cols-3 gap-2.5">
+      {/*
+        Twelve chips, two columns, six rows — and it has to fit 390 x 844 with no
+        scrolling (src/data/vocab.ts). The grid takes the leftover height and the
+        tiles divide it, so it also survives a shorter phone instead of pushing the
+        CTA off screen, which a fixed tile height did when the vocabulary went from
+        six chips to twelve.
+      */}
+      <div className="mt-[18px] grid min-h-0 flex-1 grid-cols-2 grid-rows-[repeat(6,minmax(0,1fr))] gap-2.5">
         {INTEREST_CHIPS.map((c) => (
           <InterestTile
             key={c.tag}
@@ -55,15 +62,14 @@ export default function InterestsPage() {
           />
         ))}
       </div>
-      <div className="mt-auto flex flex-col gap-3 pt-4">
+      <div className="mt-auto flex flex-col pt-4">
         <button
           onClick={carryOn}
           disabled={!canCarryOn || sending}
-          className="button flex h-[54px] items-center justify-center bg-hero-deep text-base font-medium text-white shadow-[0_12px_24px_-14px_rgba(42,0,133,0.7)] disabled:opacity-90"
+          className="button flex h-[54px] w-full items-center justify-center bg-pop text-base font-medium text-white shadow-[0_12px_24px_-14px_rgba(42,0,133,0.7)] disabled:opacity-90"
         >
           {canCarryOn ? COPY.interests.ctaReady : COPY.interests.ctaLocked}
         </button>
-        <div className="home-indicator mx-auto" />
       </div>
     </main>
   );

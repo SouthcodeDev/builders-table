@@ -58,7 +58,7 @@ export function InviteReceivedCard({
       <div className="flex gap-2.5">
         <button
           onClick={onAccept}
-          className="button flex h-12 flex-1 items-center justify-center bg-surface text-[15px] font-medium text-hero-deep"
+          className="button flex h-12 flex-1 items-center justify-center bg-surface text-[15px] font-medium text-hero"
         >
           {COPY.inviteReceived.accept}
         </button>

@@ -34,7 +34,7 @@ import {
   type Person,
   type Place,
   type Plan,
-  type Tag,
+  type InterestTag,
 } from "@/data/seed";
 import { fallbackPersona as buildFallback, localReason, rankLocally } from "@/data/rank";
 import { distanceKm } from "@/data/geo";
@@ -48,7 +48,8 @@ type PlacesContextValue = {
   ready: boolean;
   mode: Mode | null;
   user: DeviceUser | null;
-  interests: Tag[];
+  /** Ranking matches on the twelve onboarding chips only — src/data/vocab.ts. */
+  interests: InterestTag[];
   personaLoading: boolean;
   persona: PersonaResult | null;
   city: City;
@@ -67,7 +68,7 @@ type PlacesContextValue = {
   distanceTo: (place: Place) => number;
   reasonFor: (placeId: string) => string;
   signIn: (mode: Mode) => void;
-  setInterests: (tags: Tag[]) => void;
+  setInterests: (tags: InterestTag[]) => void;
   requestPersona: () => Promise<void>;
   addPlan: (placeId: string, status: Plan["status"], withPeople?: string[]) => void;
   sendInvite: (placeId: string, toUserIds: string[], note: string) => Promise<void>;
@@ -104,7 +105,7 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const [mode, setMode] = useState<Mode | null>(null);
   const [user, setUser] = useState<DeviceUser | null>(null);
-  const [interests, setInterestsState] = useState<Tag[]>([]);
+  const [interests, setInterestsState] = useState<InterestTag[]>([]);
   const [personaLoading, setPersonaLoading] = useState(false);
   const [persona, setPersona] = useState<PersonaResult | null>(null);
   const [city, setCityState] = useState<City>("cape-town");
@@ -144,7 +145,7 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
       } else if (storedUser) {
         setUser(storedUser);
       }
-      const storedInterests = read<Tag[]>(STORAGE.interests);
+      const storedInterests = read<InterestTag[]>(STORAGE.interests);
       if (storedInterests) setInterestsState(storedInterests);
       const storedPersona = read<PersonaResult>(STORAGE.persona);
       if (storedPersona) setPersona(storedPersona);
@@ -207,7 +208,7 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const setInterests = useCallback((tags: Tag[]) => {
+  const setInterests = useCallback((tags: InterestTag[]) => {
     setInterestsState(tags);
     persist(STORAGE.interests, tags);
   }, []);
@@ -374,11 +375,17 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
   const attendanceFor = useCallback(
     (placeId: string): Attendance => ({
       base: ATTENDANCE_BASE[placeId] ?? 0,
-      friends: (ATTENDANCE[placeId] ?? [])
-        .map((id) => personById(id))
-        .filter((p): p is Person => Boolean(p)),
+      // The judge has no friends (AGENTS.md §1.3) — a fresh account must never see
+      // Sam's people on a card. Mode changes the data, not the markup (§1.7), so the
+      // cards fall back to the head-count line on their own.
+      friends:
+        mode === "active"
+          ? (ATTENDANCE[placeId] ?? [])
+              .map((id) => personById(id))
+              .filter((p): p is Person => Boolean(p))
+          : [],
     }),
-    [],
+    [mode],
   );
 
   const distanceTo = useCallback(

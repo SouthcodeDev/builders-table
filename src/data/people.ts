@@ -38,7 +38,7 @@ export const ACTIVE_PERSONA: Persona = {
   label: 'Runner',
   sentence:
     "You keep choosing the ones that start outdoors and end with your legs aching. Noted.",
-  tags: ['running', 'outdoors', 'coffee', 'live-music'],
+  tags: ['running', 'outdoors', 'coffee', 'live-shows'],
 }
 
 /** Demo 2's deck order and reason lines. Pre-written — the deck never calls the model. */

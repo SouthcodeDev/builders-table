@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Check, LocateFixed, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CITIES, COPY, areasIn, placesIn } from "@/data/seed";
 import { distanceKm } from "@/data/geo";
@@ -57,26 +58,31 @@ export default function LocationPage() {
           aria-label={COPY.deck.close}
           className="grid h-[34px] w-[34px] place-items-center rounded-full bg-canvas-soft"
         >
-          <span className="relative block h-3 w-3">
-            <span className="absolute inset-x-0 top-[5px] rotate-45 border-t-2 border-ink" />
-            <span className="absolute inset-x-0 top-[5px] -rotate-45 border-t-2 border-ink" />
-          </span>
+          <X size={16} strokeWidth={2.25} aria-hidden />
         </button>
       </div>
 
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder={COPY.location.searchPlaceholder}
-        className="mt-4 flex h-12 items-center rounded-tile bg-canvas-soft px-3.5 text-[15px] outline-none placeholder:text-ink-42"
-      />
+      <div className="relative mt-4">
+        <Search
+          size={16}
+          strokeWidth={2}
+          aria-hidden
+          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted"
+        />
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={COPY.location.searchPlaceholder}
+          className="flex h-12 w-full items-center rounded-tile bg-canvas-soft pl-10 pr-3.5 text-[15px] outline-none placeholder:text-ink-42"
+        />
+      </div>
 
       <button
         onClick={useMyLocation}
         className="mt-3.5 flex items-center gap-3 rounded-2xl bg-hero p-4 text-left shadow-hero"
       >
         <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/18">
-          <span className="h-3 w-3 rotate-[-45deg] rounded-[50%_50%_50%_0] bg-white" />
+          <LocateFixed size={16} strokeWidth={2} className="text-white" aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-base font-medium text-white">
@@ -107,9 +113,7 @@ export default function LocationPage() {
                   isPicked ? "bg-hero" : "border border-ink-16"
                 }`}
               >
-                {isPicked && (
-                  <span className="h-[7px] w-[4px] -translate-y-px -rotate-45 border-x-2 border-b-2 border-white" />
-                )}
+                {isPicked && <Check size={13} strokeWidth={3} className="text-white" aria-hidden />}
               </span>
             </button>
           );
@@ -136,7 +140,7 @@ export default function LocationPage() {
 
       <button
         onClick={apply}
-        className="button mt-auto flex h-[54px] items-center justify-center bg-hero text-base font-medium text-white shadow-hero"
+        className="button mt-auto flex h-[54px] w-full items-center justify-center bg-pop text-base font-medium text-white shadow-pop"
       >
         {COPY.location.cta(picked ?? CITIES[city].label, pickedRadius)}
       </button>

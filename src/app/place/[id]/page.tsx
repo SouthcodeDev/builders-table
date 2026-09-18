@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { ArrowLeft, Navigation } from "lucide-react";
 import { useState } from "react";
 import { COPY, formatDayLabel, formatLocal, placeById } from "@/data/seed";
 import { formatDistance } from "@/data/geo";
@@ -55,10 +56,10 @@ export default function PlaceDetailPage() {
         <button
           onClick={() => router.push("/discover")}
           aria-label="Back"
-          className="absolute left-5 top-safe-plus grid h-[34px] w-[34px] place-items-center rounded-full bg-[rgba(10,10,10,0.4)]"
+          className="absolute left-5 grid h-[34px] w-[34px] place-items-center rounded-full bg-[rgba(10,10,10,0.4)] backdrop-blur-sm"
           style={{ top: "max(env(safe-area-inset-top), 54px)" }}
         >
-          <span className="block h-2.5 w-2.5 -rotate-45 border-x-2 border-b-2 border-white/90" />
+          <ArrowLeft size={18} strokeWidth={2.25} className="text-white" aria-hidden />
         </button>
         <div className="absolute inset-x-5 bottom-[18px] text-white">
           <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-white/80">
@@ -105,8 +106,9 @@ export default function PlaceDetailPage() {
         </button>
         <button
           onClick={() => router.push(`/go/${place.id}`)}
-          className="button flex h-[54px] flex-1 items-center justify-center bg-hero text-[15px] font-medium text-white shadow-hero"
+          className="button flex h-[54px] flex-1 items-center justify-center gap-2 bg-pop text-[15px] font-medium text-white shadow-pop"
         >
+          <Navigation size={16} strokeWidth={2.25} aria-hidden />
           {COPY.event.directions}
         </button>
       </div>
