@@ -41,8 +41,8 @@
 /* HeroUI brand overrides — Places palette (DESIGN_HANDOFF.md §4) */
 :root,
 [data-theme="light"] {
-  --accent: #5100ff;
-  --accent-hover: #4a00e6;
+  --accent: #FFBEBE;
+  --accent-hover: #FFBEBE;
   --accent-soft: #b9a6ff;
   --accent-soft-foreground: #2a0085;
   --background: #efedf5;

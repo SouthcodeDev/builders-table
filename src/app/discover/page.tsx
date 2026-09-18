@@ -119,7 +119,7 @@ export default function DiscoverPage() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-1 flex-col pt-safe">
+        <div className="flex flex-1 flex-col pt-safe gap-4">
           <div className="flex items-start justify-between gap-3 px-4 pt-[18px]">
             <div className="min-w-0">
               <p className="kicker">

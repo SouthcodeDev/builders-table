@@ -17,16 +17,18 @@ export default function SignInPage() {
   return (
     <main className="flex min-h-dvh flex-1 flex-col bg-surface">
       <div
-        className="photo h-[380px] w-full shrink-0 rounded-bl-[32px] rounded-br-[220px] rounded-tl-[32px] rounded-tr-[32px]"
+        className="photo h-[380px] w-full shrink-0 rounded-bl-[220px] rounded-br-[220px] rounded-tl-[32px] rounded-tr-[32px]"
         style={{ backgroundImage: "url(/images/hero-signin.jpg)" }}
       />
-      <div className="flex flex-1 flex-col px-6 pt-6 pb-safe">
-        <h1 className="text-[32px] font-medium leading-none tracking-[-0.02em]">
+      <div className="flex flex-1 justify-between flex-col px-6 pt-6 pb-safe">
+        <div className="flex flex-col flex-1 items-start justify-center gap-2">
+        <h1 className="text-4xl font-medium leading-none tracking-[-0.02em]">
           {COPY.signIn.title}
         </h1>
         <p className="mt-2 max-w-[290px] text-[15px] leading-[1.5] text-ink-50">
           {COPY.signIn.sub}
         </p>
+        </div>
         <div className="mt-6 flex flex-col gap-2.5">
           <button
             onClick={() => enter("active")}
@@ -48,9 +50,6 @@ export default function SignInPage() {
           >
             {COPY.signIn.judgeDoor}
           </button>
-          <p className="px-5 pt-2 text-center text-xs leading-[1.5] text-ink-42">
-            {COPY.signIn.footnote}
-          </p>
         </div>
       </div>
     </main>

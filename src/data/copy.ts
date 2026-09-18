@@ -28,7 +28,7 @@ export const COPY = {
     sub: "No profile to build, no bio to write. Two taps and you're looking at tonight.",
     appleDoor: 'Continue with Apple',
     googleDoor: 'Continue with Google',
-    judgeDoor: "I'm a Builder's Table judge",
+    judgeDoor: "I'm a Business",
     footnote: "We'll only ever show your first name and the events you say yes to.",
   },
   interests: {
