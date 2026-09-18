@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Navigation } from "lucide-react";
 import { useState } from "react";
-import { COPY, formatDayLabel, formatLocal, placeById } from "@/data/seed";
+import { COPY, formatDayLabel, timeLabel, placeById } from "@/data/seed";
 import { formatDistance } from "@/data/geo";
 import { AvatarStack } from "@/components/avatar-stack";
 import { InviteSheet } from "@/components/invite-sheet";
@@ -27,7 +27,7 @@ export default function PlaceDetailPage() {
   const attendance = attendanceFor(place.id);
   const meta = [
     formatDayLabel(place),
-    formatLocal(place),
+    timeLabel(place),
     formatDistance(distanceTo(place)),
     place.price ?? null,
   ]

@@ -95,5 +95,5 @@ export const ACTIVE_PASSPORT: Passport = {
     { title: 'Quiz night in Obz', dateLabel: 'Aug 09', image: '/images/obz-quiz.jpg' },
   ],
   stampsMore: 25,
-  nextStamp: { title: 'Run the promenade', when: 'Tonight 18:00' },
+  nextStamp: { title: 'Run the promenade', when: 'Tonight 6:00 pm' },
 }

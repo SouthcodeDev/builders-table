@@ -1,6 +1,6 @@
 "use client";
 
-import { COPY, formatDayLabel, formatLocal, type Attendance, type Place } from "@/data/seed";
+import { COPY, formatDayLabel, timeLabel, type Attendance, type Place } from "@/data/seed";
 import { formatDistance } from "@/data/geo";
 import { isStartingSoon, minutesUntil } from "@/data/schedule";
 import { AvatarStack } from "./avatar-stack";
@@ -29,7 +29,7 @@ export function EventCard({
   const showStartsPill = featured && !timePill && isStartingSoon(place, 120);
   const meta = [
     timePill ? null : formatDayLabel(place),
-    formatLocal(place),
+    timeLabel(place),
     formatDistance(distanceKm),
     place.price ?? null,
   ]

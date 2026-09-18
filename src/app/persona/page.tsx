@@ -62,7 +62,14 @@ export default function PersonaPage() {
         </p>
       </div>
       <button
-        onClick={() => router.push("/discover")}
+        onClick={() => {
+          // The one geolocation prompt, during onboarding (SETUP.md Step 5).
+          // Fire and forget — the answer lands whenever the user gets to it.
+          if (typeof navigator !== "undefined" && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(() => {}, () => {});
+          }
+          router.push("/discover");
+        }}
         className="button relative z-10 flex h-[54px] w-full items-center justify-center bg-surface text-base font-medium text-ink"
       >
         {COPY.persona.accept}

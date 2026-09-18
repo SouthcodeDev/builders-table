@@ -1,14 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { MapPin } from "lucide-react";
 import {
   CITIES,
   COPY,
   INTEREST_CHIPS,
   placeById,
-  STORAGE,
   daypart,
   formatLocal,
   weekday,
@@ -21,7 +21,7 @@ import { Segmented } from "@/components/segmented";
 import { TabBar } from "@/components/tab-bar";
 import { usePlaces } from "@/state/places";
 
-type Tab = "feed" | "map";
+type Tab = "map" | "feed";
 
 export default function DiscoverPage() {
   const router = useRouter();
@@ -29,20 +29,8 @@ export default function DiscoverPage() {
     ready, mode, user, interests, city, area, radiusKm, events,
     attendanceFor, distanceTo, addPlan,
   } = usePlaces();
-  const [tab, setTab] = useState<Tab>("feed");
+  const [tab, setTab] = useState<Tab>("map");
   const [pinId, setPinId] = useState<string | null>(null);
-
-  useEffect(() => {
-    queueMicrotask(() => {
-      const stored = localStorage.getItem(STORAGE.tab);
-      if (stored === "feed" || stored === "map") setTab(stored);
-    });
-  }, []);
-
-  const switchTab = (t: Tab) => {
-    setTab(t);
-    localStorage.setItem(STORAGE.tab, t);
-  };
 
   if (!ready) {
     return <main className="min-h-dvh flex-1 bg-canvas" />;
@@ -119,54 +107,69 @@ export default function DiscoverPage() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-1 flex-col pt-safe gap-4">
-          <div className="flex items-start justify-between gap-3 px-4 pt-[18px]">
-            <div className="min-w-0">
-              <p className="kicker">
-                {weekday(cityMeta.tz)} {daypart(cityMeta.tz)} · {cityMeta.label}
-                {area ? ` · ${area}` : ""}
-              </p>
-              <h1 className="mt-1.5 text-2xl font-medium leading-[1.12] tracking-[-0.02em]">
-                {mode === "active" ? (
-                  <>
-                    Evening, {firstName}.
-                    <br />
-                    {n} things on nearby.
-                  </>
-                ) : topTwo.length >= 2 ? (
-                  <>
-                    Into {topTwo.join(" and ")}?
-                    <br />
-                    {n} things nearby.
-                  </>
-                ) : (
-                  <>
-                    {n} things nearby,
-                    <br />
-                    picked for tonight.
-                  </>
-                )}
-              </h1>
+        <div className="relative flex flex-1 flex-col pt-safe">
+          {/* Header — the greeting collapses on map; the switcher rises into its place. */}
+          <div className="relative z-10">
+            <AnimatePresence initial={false}>
+              {tab === "feed" && (
+                <motion.div
+                  key="greeting"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="flex items-start justify-between gap-3 px-4 pt-[18px]">
+                    <div className="min-w-0">
+                      <p className="kicker">
+                        {weekday(cityMeta.tz)} {daypart(cityMeta.tz)} · {cityMeta.label}
+                        {area ? ` · ${area}` : ""}
+                      </p>
+                      <h1 className="mt-1.5 text-2xl font-medium leading-[1.12] tracking-[-0.02em]">
+                        {mode === "active" ? (
+                          <>
+                            Evening, {firstName}.
+                            <br />
+                            {n} things on nearby.
+                          </>
+                        ) : topTwo.length >= 2 ? (
+                          <>
+                            Into {topTwo.join(" and ")}?
+                            <br />
+                            {n} things nearby.
+                          </>
+                        ) : (
+                          <>
+                            {n} things nearby,
+                            <br />
+                            picked for tonight.
+                          </>
+                        )}
+                      </h1>
+                    </div>
+                    <button
+                      onClick={() => router.push("/location")}
+                      aria-label={COPY.location.title}
+                      className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-[1.5px] border-ink-16 bg-surface shadow-[0_1px_2px_rgba(10,10,10,0.05)]"
+                    >
+                      <MapPin size={17} strokeWidth={2} className="text-hero" aria-hidden />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <div className="px-4 pt-4">
+              <Segmented
+                options={[
+                  { id: "map" as Tab, label: COPY.discover.mapTab },
+                  { id: "feed" as Tab, label: COPY.discover.feedTab },
+                ]}
+                value={tab}
+                onChange={setTab}
+                onSurface={tab === "map"}
+              />
             </div>
-            <button
-              onClick={() => router.push("/location")}
-              aria-label={COPY.location.title}
-              className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-[1.5px] border-ink-16 bg-surface shadow-[0_1px_2px_rgba(10,10,10,0.05)]"
-            >
-              <MapPin size={17} strokeWidth={2} className="text-hero" aria-hidden />
-            </button>
-          </div>
-
-          {/* feed / map */}
-          <div className="px-4 pt-4">
-            <Segmented
-              options={[
-                { id: "feed" as Tab, label: COPY.discover.feedTab },
-                { id: "map" as Tab, label: COPY.discover.mapTab },
-              ]}
-              value={tab}
-              onChange={switchTab}
-            />
           </div>
 
           {tab === "feed" ? (
@@ -225,24 +228,25 @@ export default function DiscoverPage() {
               </div>
             </>
           ) : (
-            <div className="relative flex min-h-0 flex-1 flex-col px-4 pb-4 pt-3">
-              <div className="relative min-h-0 flex-1 overflow-hidden rounded-big">
+            <>
+              {/* Full-bleed map, edge to edge, under the floating header and tab bar. */}
+              <div className="fixed inset-0 z-0">
                 <MapView
                   city={city}
                   places={events}
                   selectedId={pinId}
                   onSelectPin={setPinId}
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 rounded-big bg-white/95 p-4 shadow-sheet">
-                  <p className="text-[10px] font-medium tracking-[0.08em] text-muted">
-                    {COPY.discover.pinHint}
-                  </p>
-                  <p className="mt-0.5 text-[15px] font-medium">
-                    {COPY.discover.pinSummary(n, radiusKm)}
-                  </p>
-                </div>
               </div>
-            </div>
+              <div className="pointer-events-none fixed inset-x-4 bottom-tabbar z-10 rounded-big bg-white/95 p-4 shadow-sheet">
+                <p className="text-[10px] font-medium tracking-[0.08em] text-muted">
+                  {COPY.discover.pinHint}
+                </p>
+                <p className="mt-0.5 text-[15px] font-medium">
+                  {COPY.discover.pinSummary(n, radiusKm)}
+                </p>
+              </div>
+            </>
           )}
         </div>
       )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { Navigation } from "lucide-react";
-import { COPY, formatDayLabel, formatLocal, type Attendance, type Place } from "@/data/seed";
+import { COPY, formatDayLabel, timeLabel, type Attendance, type Place } from "@/data/seed";
 import { formatDistance } from "@/data/geo";
 import { AvatarStack } from "./avatar-stack";
 
@@ -20,7 +20,7 @@ export function PinSheet({
 }) {
   const meta = [
     formatDayLabel(place),
-    formatLocal(place),
+    timeLabel(place),
     formatDistance(distanceKm),
     place.price ?? null,
   ]

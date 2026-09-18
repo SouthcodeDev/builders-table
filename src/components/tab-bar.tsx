@@ -21,7 +21,7 @@ export function TabBar() {
         comes from --tabbar-h in globals.css, the one number both of them read.
       */}
       <div aria-hidden className="h-tabbar shrink-0" />
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-ink-07 bg-surface/95 pt-2 pb-safe backdrop-blur-md">
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-ink-07 bg-surface pt-2 pb-safe">
         <div className="flex items-start justify-around px-6">
           {TABS.map(({ href, label, Icon }) => {
             const active = pathname.startsWith(href);

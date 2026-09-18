@@ -52,12 +52,30 @@ export function minutesUntil(place: Place, now = demoNow()): number {
   return Math.round((startOf(place, now).getTime() - now.getTime()) / 60000)
 }
 
-/** Format in the PLACE's local time. A Tokyo event shows Tokyo time, deliberately. */
+/** Format in the PLACE's local time, 12-hour with am/pm. A Tokyo event shows Tokyo time, deliberately. */
 export function formatLocal(place: Place, now = demoNow()): string {
   return new Intl.DateTimeFormat('en-GB', {
     timeZone: CITIES[place.city].tz,
-    hour: '2-digit', minute: '2-digit', hour12: false,
+    hour: 'numeric', minute: '2-digit', hour12: true,
   }).format(startOf(place, now))
+}
+
+/**
+ * For always-on places (cafés, studios), the displayed time is the CLOSING time.
+ * There is no closing column in the CSV yet — closing is derived as opening +
+ * durationMin. Made-up numbers for now; swap for a real column when curation adds one.
+ */
+export function closingLabel(place: Place, now = demoNow()): string {
+  const close = new Date(startOf(place, now).getTime() + place.durationMin * 60000)
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: CITIES[place.city].tz,
+    hour: 'numeric', minute: '2-digit', hour12: true,
+  }).format(close)
+}
+
+/** The time slot a card shows: start time for events, closing time for places. */
+export function timeLabel(place: Place, now = demoNow()): string {
+  return place.kind === 'place' ? `Closes ${closingLabel(place, now)}` : formatLocal(place, now)
 }
 
 export function formatDayLabel(place: Place, now = demoNow()): string {

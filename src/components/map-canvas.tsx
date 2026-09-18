@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
+import { LocateFixed } from "lucide-react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { CITIES, type City, type Place } from "@/data/seed";
 
@@ -33,6 +34,7 @@ export default function MapCanvas({
   const markersRef = useRef(
     new Map<string, { marker: mapboxgl.Marker; el: HTMLButtonElement }>(),
   );
+  const userDotRef = useRef<mapboxgl.Marker | null>(null);
   const placesRef = useRef(places);
   const onSelectRef = useRef(onSelectPin);
   const selectedRef = useRef(selectedId);
@@ -131,6 +133,42 @@ export default function MapCanvas({
     fitToPlaces();
   }, [places, token, applySelection, fitToPlaces]);
 
+  /**
+   * Drop (or move) the user-location dot. fly=true is the explicit button — it also
+   * recentres on the user, or back onto the pins when location is unavailable.
+   * The permission prompt itself fires once during onboarding ("Let's jump in");
+   * every call here is silent.
+   */
+  const locateUser = useCallback(
+    (fly: boolean) => {
+      if (typeof navigator === "undefined" || !navigator.geolocation) return;
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const map = mapRef.current;
+          if (!map) return;
+          const { latitude, longitude } = pos.coords;
+          if (userDotRef.current) userDotRef.current.remove();
+          const el = document.createElement("span");
+          el.className = "mapboxgl-user-location-dot";
+          el.style.cssText = "position:relative;display:block";
+          userDotRef.current = new mapboxgl.Marker({ element: el })
+            .setLngLat([longitude, latitude])
+            .addTo(map);
+          if (fly) map.flyTo({ center: [longitude, latitude], zoom: 14, duration: 700 });
+        },
+        () => {
+          if (fly) fitToPlaces();
+        },
+        { timeout: 8000, maximumAge: 60000 },
+      );
+    },
+    [fitToPlaces],
+  );
+
+  useEffect(() => {
+    locateUser(false);
+  }, [locateUser]);
+
   // Selected pin: distinct styling, eased above the sheet.
   useEffect(() => {
     applySelection();
@@ -160,11 +198,11 @@ export default function MapCanvas({
       <div ref={containerRef} className="absolute inset-0" />
       <button
         type="button"
-        onClick={fitToPlaces}
-        aria-label="Recentre map"
-        className="absolute right-3 top-3 z-10 grid h-11 w-11 place-items-center rounded-xl bg-surface shadow-[0_6px_16px_-6px_rgba(10,10,10,0.4)]"
+        onClick={() => locateUser(true)}
+        aria-label="Show my location"
+        className="absolute right-3 top-[124px] z-10 grid h-11 w-11 place-items-center rounded-xl bg-surface shadow-[0_6px_16px_-6px_rgba(10,10,10,0.4)]"
       >
-        <span className="block h-[15px] w-[15px] rounded-full border-[2.5px] border-accent" />
+        <LocateFixed size={18} strokeWidth={2} className="text-accent" aria-hidden />
       </button>
     </div>
   );

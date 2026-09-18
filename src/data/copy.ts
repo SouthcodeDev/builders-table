@@ -46,7 +46,7 @@ export const COPY = {
   persona: {
     kicker: (labels: string[]) =>
       labels.length > 0 ? `${labels.join(', ')} said yes to` : 'Your picks said yes to',
-    accept: 'Show me tonight',
+    accept: "Let's jump in",
     footnote: "This shifts every time you say yes or no to something — it's a read, not a label.",
   },
   discover: {
