@@ -42,7 +42,7 @@ export function EventCard({
     <button
       onClick={onPress}
       className={`photo relative w-full shrink-0 overflow-hidden rounded-big text-left shadow-card ${
-        featured ? "h-[200px]" : "h-[140px]"
+        featured ? "h-[200px]" : "h-[200px]"
       }`}
       style={{ backgroundImage: `url(${place.image})` }}
     >
