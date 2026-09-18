@@ -5,10 +5,15 @@ export * from './types'
 export * from './vocab'
 export { PLACES, placeById } from './places'
 export {
-  ME_ACTIVE, DEVICE_USERS, FRIENDS, personById, ACTIVE_PERSONA,
-  ATTENDANCE, ACTIVE_PLANS, ACTIVE_PASSPORT,
+  ME_ACTIVE, DEVICE_USERS, FRIENDS, personById, ACTIVE_PERSONA, ACTIVE_RANKED,
+  ATTENDANCE, ATTENDANCE_BASE, AMEER_PLANS, ACTIVE_PLANS, ACTIVE_PASSPORT,
 } from './people'
 export { COPY } from './copy'
+export {
+  demoNow, startOf, minutesUntil, formatLocal, formatDayLabel, isStartingSoon,
+  daypart, weekday,
+} from './schedule'
+export { distanceKm, formatDistance, directionsUrl } from './geo'
 
 import { PLACES } from './places'
 import { ACTIVE_PLANS } from './people'
@@ -27,8 +32,15 @@ export const activePlans = (): Plan[] =>
 export const STORAGE = {
   mode: 'places.mode',
   user: 'places.user',
+  interests: 'places.interests',
   persona: 'places.persona',
+  personaLoading: 'places.personaLoading',
   plans: 'places.plans',
-  deckSeen: 'places.deckSeen',
+  deckPicks: 'places.deckPicks',
   city: 'places.city',
+  area: 'places.area',
+  radius: 'places.radius',
+  invites: 'places.invites',
+  device: 'places.device',
+  tab: 'places.tab',
 } as const

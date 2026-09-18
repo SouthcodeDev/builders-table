@@ -76,3 +76,18 @@ export function isStartingSoon(place: Place, withinMin = 45, now = demoNow()): b
   const m = minutesUntil(place, now)
   return m >= 0 && m <= withinMin
 }
+
+/** Weekday name in a city's tz — "Friday". */
+export function weekday(tz: string, now = demoNow()): string {
+  return new Intl.DateTimeFormat('en-GB', { timeZone: tz, weekday: 'long' }).format(now)
+}
+
+/** Part of day in a city's tz — header greeter. */
+export function daypart(tz: string, now = demoNow()): 'morning' | 'afternoon' | 'evening' {
+  const h = Number(
+    new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', hour12: false }).format(now),
+  )
+  if (h < 12) return 'morning'
+  if (h < 17) return 'afternoon'
+  return 'evening'
+}

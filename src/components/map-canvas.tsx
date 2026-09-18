@@ -5,9 +5,13 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { CITIES, placesIn, type City } from "@/data/seed";
 
-type Props = { city: City; height?: number };
+type Props = {
+  city: City;
+  height?: number;
+  onSelectPin?: (placeId: string) => void;
+};
 
-export default function MapCanvas({ city, height = 320 }: Props) {
+export default function MapCanvas({ city, height, onSelectPin }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -21,27 +25,41 @@ export default function MapCanvas({ city, height = 320 }: Props) {
       center: [meta.center.lng, meta.center.lat],
       zoom: meta.zoom,
     });
-    const markers = placesIn(city).map((p) =>
-      new mapboxgl.Marker({ color: "#5100FF" })
+    const markers = placesIn(city).map((p) => {
+      const el = document.createElement("button");
+      el.style.cssText =
+        "width:28px;height:28px;border-radius:999px;background:#5100FF;border:3px solid #fff;box-shadow:0 8px 16px -8px rgba(10,10,10,0.5);cursor:pointer;padding:0";
+      el.addEventListener("click", (e) => {
+        e.stopPropagation();
+        onSelectPin?.(p.id);
+      });
+      return new mapboxgl.Marker({ element: el })
         .setLngLat([p.lng, p.lat])
-        .setPopup(new mapboxgl.Popup({ offset: 12 }).setHTML(`<strong>${p.title}</strong>`))
-        .addTo(map)
-    );
+        .addTo(map);
+    });
     return () => {
       markers.forEach((m) => m.remove());
       map.remove();
     };
-  }, [city, token]);
+  }, [city, token, onSelectPin]);
 
   if (!token) {
     return (
       <div
-        style={{ height }}
-        className="flex w-full items-center justify-center rounded-card bg-canvas-alt px-6 text-center text-xs text-ink-60"
+        style={height ? { height } : undefined}
+        className={`flex w-full items-center justify-center rounded-big bg-canvas-alt px-6 text-center text-xs text-ink-50 ${
+          height ? "" : "absolute inset-0"
+        }`}
       >
         No NEXT_PUBLIC_MAPBOX_TOKEN set — map hidden. Paste a token into .env.local.
       </div>
     );
   }
-  return <div ref={containerRef} style={{ height }} className="w-full" />;
+  return (
+    <div
+      ref={containerRef}
+      style={height ? { height } : undefined}
+      className={height ? "w-full" : "absolute inset-0"}
+    />
+  );
 }

@@ -1,24 +1,30 @@
 "use client";
 
-import { Button } from "@heroui/react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { COPY } from "@/data/seed";
+import { LogoMark } from "@/components/logo-mark";
 
-export default function Home() {
+export default function SplashPage() {
+  const router = useRouter();
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-6 bg-canvas px-6 pt-safe pb-safe text-center">
-      <p className="text-[11px] uppercase tracking-[0.1em] text-ink-60">
-        Skeleton · Gate 1
-      </p>
-      <h1 className="font-wordmark text-5xl font-black text-hero">
-        {COPY.splash.wordmark}
-      </h1>
-      <Button size="lg">{COPY.splash.cta}</Button>
-      <nav className="flex flex-col gap-2 text-sm text-ink-60">
-        <Link href="/spike/maps">/spike/maps — Gate 4 handoff</Link>
-        <Link href="/spike/map">/spike/map — Gate 5 mapbox</Link>
-        <Link href="/spike/seed">/spike/seed — Gate 6 seed times</Link>
-      </nav>
+    <main className="flex min-h-dvh flex-1 flex-col bg-surface">
+      <div className="flex flex-1 flex-col items-center justify-center gap-5 px-7 pt-safe text-center">
+        <LogoMark size={30} color="#2A0085" dotColor="#B9A6FF" />
+        <h1 className="font-wordmark text-[64px] font-black leading-[0.9] tracking-[-0.02em] text-hero-deep">
+          {COPY.splash.wordmark}
+        </h1>
+        <p className="max-w-[260px] text-base leading-[1.5] text-ink-60">{COPY.splash.line}</p>
+        <button
+          onClick={() => router.push("/sign-in")}
+          className="button mt-1.5 border-[1.5px] border-ink-16 px-10 py-[15px] text-[15px] font-medium"
+        >
+          {COPY.splash.cta}
+        </button>
+      </div>
+      <div
+        className="photo h-[240px] w-full rounded-t-[220px]"
+        style={{ backgroundImage: "url(/images/hero-splash.jpg)" }}
+      />
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { COPY } from "@/data/seed";
+import { PlacesProvider } from "@/state/places";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -30,8 +31,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="flex min-h-full flex-col">{children}</body>
+    <html lang="en" className="light" data-theme="light">
+      <body className="flex min-h-full flex-col bg-background text-foreground">
+        <PlacesProvider>{children}</PlacesProvider>
+      </body>
     </html>
   );
 }

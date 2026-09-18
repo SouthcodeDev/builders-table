@@ -41,12 +41,37 @@ export const ACTIVE_PERSONA: Persona = {
   tags: ['running', 'outdoors', 'coffee', 'live-music'],
 }
 
+/** Demo 2's deck order and reason lines. Pre-written — the deck never calls the model. */
+export const ACTIVE_RANKED: { eventId: string; reason: string }[] = [
+  { eventId: 'ct-golden-hour-6k', reason: 'Early miles, then coffee — the usual shape of your day.' },
+  { eventId: 'ct-contour-path', reason: 'Another early outdoor start, which you keep saying yes to.' },
+  { eventId: 'ct-woodstock-open-studio', reason: 'Starts within the hour, and it is practically next door.' },
+  { eventId: 'ct-oranjezicht-market', reason: 'Coffee and produce with the mountain right there.' },
+  { eventId: 'ct-obz-open-mic', reason: 'For the nights you stay out past nine.' },
+  { eventId: 'ct-kalk-bay-swim', reason: 'Cold water is a big ask. It is here anyway.' },
+]
+
 /** Who else is going to what — drives the avatar stacks on Discover and Event detail. */
 export const ATTENDANCE: Record<string, string[]> = {
   'ct-golden-hour-6k': ['nandi', 'thabo', 'aisha'],
   'ct-obz-open-mic': ['thabo'],
   'ct-oranjezicht-market': ['aisha'],
 }
+
+/** Total head-count fiction for judge mode, where no friends exist. */
+export const ATTENDANCE_BASE: Record<string, number> = {
+  'ct-golden-hour-6k': 14,
+  'ct-woodstock-open-studio': 9,
+  'ct-kalk-bay-swim': 6,
+  'ct-obz-open-mic': 22,
+  'ct-oranjezicht-market': 30,
+  'ct-contour-path': 11,
+}
+
+/** Ameer's device sees this instead of Sam's plans. */
+export const AMEER_PLANS: Omit<Plan, 'createdAtMs'>[] = [
+  { id: 'ameer-plan-1', placeId: 'ct-golden-hour-6k', withPeople: [], status: 'going' },
+]
 
 /** Demo 2's existing schedule. createdAtMs is filled at load — see seed.ts. */
 export const ACTIVE_PLANS: Omit<Plan, 'createdAtMs'>[] = [
@@ -57,12 +82,16 @@ export const ACTIVE_PLANS: Omit<Plan, 'createdAtMs'>[] = [
 ]
 
 export const ACTIVE_PASSPORT: Passport = {
-  stats: { places: 34, events: 21, cities: 3, peopleMet: 47 },
+  stats: { places: 31, withFriends: 9, cities: 2 },
+  note: 'Four Fridays in a row you went outside.',
   stamps: [
-    { label: 'Runner', since: 'SINCE SEP', detail: '3 runs in · 2 suburbs · 18:30 usual hour' },
-    { label: 'Night owl', since: 'SINCE JUN', detail: 'Most of your yeses start after 20:00' },
-    { label: 'Explorer', since: 'SINCE APR', detail: 'Six suburbs you had never been to' },
+    { title: 'Golden hour 6k', dateLabel: 'Sep 12', image: '/images/golden-hour-6k.jpg' },
+    { title: 'Contour path', dateLabel: 'Sep 06', image: '/images/contour-path.jpg' },
+    { title: 'Bo-Kaap market', dateLabel: 'Aug 31', image: '/images/oranjezicht-market.jpg' },
+    { title: 'Izakaya alley', dateLabel: 'Aug 24', image: '/images/shimokita-records.jpg' },
+    { title: 'Long table', dateLabel: 'Aug 17', image: '/images/nakameguro-coffee.jpg' },
+    { title: 'Four bands', dateLabel: 'Aug 09', image: '/images/obz-open-mic.jpg' },
   ],
-  areas: ['Kalk Bay', 'Observatory', 'Sea Point', 'Woodstock', 'Table Mountain', 'Muizenberg'],
-  communities: ['Sea Point Runners', 'Obz Open Mic'],
+  stampsMore: 25,
+  nextStamp: { title: 'Golden hour 6k', when: 'Tonight 18:30' },
 }

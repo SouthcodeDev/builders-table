@@ -120,13 +120,18 @@ export type Invite = {
   createdAtMs: number
 }
 
-export type PassportStamp = { label: string; since: string; detail: string }
+export type PassportStamp = { title: string; dateLabel: string; image: string }
 
 export type Passport = {
-  stats: { places: number; events: number; cities: number; peopleMet: number }
+  stats: { places: number; withFriends: number; cities: number }
+  /** One factual attendance line. Never a streak, never a score. */
+  note: string
   stamps: PassportStamp[]
-  areas: string[]
-  communities: string[]
+  stampsMore: number
+  nextStamp: { title: string; when: string } | null
 }
 
 export type Mode = 'judge' | 'active'
+
+/** Social proof for one place: friend avatars (active mode) plus a head-count base. */
+export type Attendance = { base: number; friends: Person[] }
