@@ -47,3 +47,6 @@ next-env.d.ts
 
 # one-off audit output — regenerate with `node scripts/audit.mjs`, never commit
 /AUDIT.md
+
+# script backups
+*.bak
