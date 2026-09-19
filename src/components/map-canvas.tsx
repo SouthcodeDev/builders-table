@@ -124,7 +124,7 @@ export default function MapCanvas({
       el.style.cssText =
         `width:26px;height:26px;border-radius:999px;background:${
           brand ? "#FF4A00" : "#5100FF"
-        };border:3px solid #fff;box-shadow:0 8px 16px -8px rgba(10,10,10,0.5);cursor:pointer;padding:0;transition:all 150ms ease`;
+        };border:3px solid #fff;box-shadow:0 8px 16px -8px rgba(10,10,10,0.5);cursor:pointer;padding:0;transition:width 150ms ease,height 150ms ease,opacity 150ms ease`;
       el.addEventListener("click", (e) => {
         e.stopPropagation();
         onSelectRef.current?.(p.id);

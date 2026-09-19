@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import {
   BIZ_LIVE,
+  EMPTY_DRAFT,
   BIZ_PAST,
   BUSINESS,
   COPY,
@@ -67,7 +68,7 @@ function LiveRow({ event, onPress }: { event: BizEvent; onPress: () => void }) {
 
 export default function BusinessDashboardPage() {
   const router = useRouter();
-  const { ready, myEvents } = usePlaces();
+  const { ready, myEvents, setDraft } = usePlaces();
 
   if (!ready) {
     return <main className="min-h-dvh flex-1 bg-surface" />;
@@ -154,7 +155,10 @@ export default function BusinessDashboardPage() {
 
       <div className="border-t border-ink-07 bg-surface px-5 pt-3 pb-safe">
         <button
-          onClick={() => router.push("/business/new")}
+          onClick={() => {
+            setDraft(EMPTY_DRAFT);
+            router.push("/business/new");
+          }}
           className="button flex h-[54px] w-full items-center justify-center bg-pop text-base font-medium text-white shadow-pop"
         >
           {COPY.business.create}

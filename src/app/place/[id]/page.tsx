@@ -16,6 +16,7 @@ import {
 import { formatDistance } from "@/data/geo";
 import { AvatarStack } from "@/components/avatar-stack";
 import { InviteSheet } from "@/components/invite-sheet";
+import { MapSnippet } from "@/components/map-snippet";
 import { InviteSentSheet } from "@/components/invite-sent-sheet";
 import { usePlaces } from "@/state/places";
 
@@ -150,6 +151,14 @@ export default function PlaceDetailPage() {
             <span className="text-[13px] leading-[1.4] text-ink-60">{goingLine}</span>
           </div>
         )}
+
+        <div className="border-t border-ink-07 pt-4">
+          <MapSnippet
+            place={place}
+            distanceKm={distanceTo(place)}
+            onPress={() => router.push(`/go/${place.id}`)}
+          />
+        </div>
       </div>
 
       <div className="fixed inset-x-0 bottom-0 mx-auto flex w-full flex-col gap-2.5 bg-surface px-5 pt-3 pb-safe">

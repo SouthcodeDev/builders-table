@@ -408,8 +408,9 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     setMyEvents(next);
     registerPlaces(next);
     persist(STORAGE.myEvents, next);
-    setDraftState(EMPTY_DRAFT);
-    persist(STORAGE.draft, EMPTY_DRAFT);
+    // Deliberately does NOT clear the draft. Clearing it here flipped the preview
+    // page into its "nothing drafted" state, which redirected to the form and beat
+    // the push to the report. The dashboard resets the draft on the way in instead.
     return place;
   }, [draft, myEvents]);
 

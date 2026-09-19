@@ -30,7 +30,7 @@ export default function DiscoverPage() {
   const router = useRouter();
   const {
     ready, mode, user, interests, city, area, radiusKm, events, myEvents,
-    attendanceFor, distanceTo, addPlan,
+    attendanceFor, distanceTo,
   } = usePlaces();
   const [tab, setTab] = useState<Tab>("map");
   const [pinId, setPinId] = useState<string | null>(null);
@@ -291,12 +291,7 @@ export default function DiscoverPage() {
             place={pinPlace}
             distanceKm={distanceTo(pinPlace)}
             attendance={attendanceFor(pinPlace.id)}
-            onGoing={() => {
-              addPlan(pinPlace.id, "going");
-              setPinId(null);
-              router.push("/plans");
-            }}
-            onDirections={() => router.push(`/go/${pinPlace.id}`)}
+            onCheck={() => router.push(`/place/${pinPlace.id}`)}
           />
         </div>
       )}

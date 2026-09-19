@@ -159,6 +159,8 @@ export const COPY = {
     statCloses: 'Closes',
     statAway: 'Away',
     statCosts: 'Costs',
+    gettingThere: 'Getting there',
+    openInMaps: 'Open in Maps',
     startsIn: (m: number) => (m < 60 ? `Starts in ${m} min` : `Starts in ${Math.round(m / 60)} hrs`),
   },
   invite: {
