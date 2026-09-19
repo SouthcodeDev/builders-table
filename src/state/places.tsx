@@ -81,6 +81,7 @@ type PlacesContextValue = {
   distanceTo: (place: Place) => number;
   reasonFor: (placeId: string) => string;
   signIn: (mode: Mode) => void;
+  signOut: () => void;
   setInterests: (tags: InterestTag[]) => void;
   requestPersona: () => Promise<void>;
   addPlan: (placeId: string, status: Plan["status"], withPeople?: string[]) => void;
@@ -238,6 +239,40 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
       persist(STORAGE.interests, []);
       setDeckPicks({});
       persist(STORAGE.deckPicks, {});
+    }
+  }, []);
+
+  /**
+   * Back to the sign-in facade, with the session actually gone rather than just
+   * navigated away from — the whole point is being able to re-run onboarding from
+   * scratch between takes.
+   *
+   * STORAGE.device survives deliberately. It is the ?as=ameer identity pinned to the
+   * second phone, and clearing it would turn that handset back into Sam mid-demo.
+   */
+  const signOut = useCallback(() => {
+    setMode(null);
+    setUser(null);
+    setInterestsState([]);
+    setPersona(null);
+    setPersonaLoading(false);
+    setPlans([]);
+    setInvites([]);
+    setDeckPicks({});
+    setCityState("cape-town");
+    setAreaState(null);
+    setStampPhotos({});
+    setMyRicochets([]);
+    setMyEvents([]);
+    setDraftState(EMPTY_DRAFT);
+
+    for (const key of Object.values(STORAGE)) {
+      if (key === STORAGE.device) continue;
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        // private mode / storage disabled — in-memory reset above still stands
+      }
     }
   }, []);
 
@@ -633,6 +668,7 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     distanceTo,
     reasonFor,
     signIn,
+    signOut,
     setInterests,
     requestPersona,
     addPlan,

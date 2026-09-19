@@ -9,9 +9,9 @@
 import type { Person, Persona, Plan, Passport } from './types'
 
 export const ME_ACTIVE = {
-  id: 'sam',
-  name: 'Sam Mbeki',
-  initials: 'SM',
+  id: 'phumi',
+  name: 'Phumi Körber',
+  initials: 'PK',
   city: 'cape-town' as const,
   since: 'March',
 }

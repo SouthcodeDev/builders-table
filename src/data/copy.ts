@@ -310,4 +310,10 @@ export const COPY = {
       km == null ? `Show ${area}, any distance` : `Show ${area}, ${km} km`,
   },
   nav: { discover: 'Discover', plans: 'Plans', profile: 'Profile' },
+  profile: {
+    signOut: 'Log out',
+    // Said plainly, because it is true — logging out drops the passport and the
+    // plans on this device and onboarding starts again from the chips.
+    signOutNote: 'Clears this device and starts you over.',
+  },
 } as const

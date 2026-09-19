@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 import { COPY, ME_ACTIVE, collection, levelFor } from "@/data/seed";
 import { StampTile } from "@/components/stamp-tile";
 import { TabBar } from "@/components/tab-bar";
@@ -9,7 +10,7 @@ import { usePlaces } from "@/state/places";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { ready, user, passport } = usePlaces();
+  const { ready, user, passport, signOut } = usePlaces();
 
   if (!ready) {
     return <main className="min-h-dvh flex-1 bg-canvas" />;
@@ -20,7 +21,7 @@ export default function ProfilePage() {
 
   return (
     <main className="flex min-h-dvh flex-1 flex-col bg-surface">
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pt-safe pb-4">
+      <div className="flex min-h-0 gap-4 flex-1 flex-col overflow-y-auto px-5 pt-safe pb-4">
         {passport ? (
           <>
             <div className="flex items-center gap-3.5 pt-1">
@@ -50,11 +51,6 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            <div className="mt-4 flex items-center gap-3 rounded-2xl bg-canvas p-4">
-              <span className="h-2 w-2 shrink-0 rounded-full bg-hero" />
-              <span className="text-[13px] leading-[1.4] text-ink-60">{passport.note}</span>
-            </div>
-
             {/*
               The collection. Everything on this block is a count of places actually
               attended — see src/data/levels.ts for why there is no streak here and
@@ -66,7 +62,7 @@ export default function ProfilePage() {
               // tracks real attendance, so it reads the visit count.
               const state = levelFor(passport.stats.places);
               return (
-                <div className="mt-2.5 rounded-2xl bg-hero-deep p-4 text-white">
+                <div className="mt-2.5 rounded-2xl bg-pop p-4 text-white">
                   <div className="flex items-baseline justify-between gap-3">
                     <span className="text-[9px] font-medium uppercase tracking-[0.08em] text-white/60">
                       {COPY.levels.kicker}
@@ -122,7 +118,7 @@ export default function ProfilePage() {
                 {COPY.passport.more(passport.stampsMore)}
               </div>
               {passport.nextStamp && (
-                <div className="col-span-2 flex flex-col justify-center gap-0.5 rounded-tile bg-hero-deep p-3.5">
+                <div className="col-span-2 flex flex-col justify-center gap-0.5 rounded-tile bg-pop p-3.5">
                   <span className="text-[9px] font-medium uppercase tracking-[0.08em] text-white/60">
                     {COPY.passport.nextKicker}
                   </span>
@@ -147,6 +143,20 @@ export default function ProfilePage() {
           </div>
         )}
 
+        <div className="mt-6 flex flex-col items-center gap-1.5 pb-2">
+          <button
+            onClick={() => {
+              signOut();
+              // replace, not push — Back must not land on a logged-out passport.
+              router.replace("/sign-in");
+            }}
+            className="flex h-[46px] items-center justify-center gap-2 rounded-full border-[1.5px] border-ink-16 px-6 text-[15px] font-medium text-ink"
+          >
+            <LogOut size={17} strokeWidth={2} aria-hidden />
+            {COPY.profile.signOut}
+          </button>
+          <p className="text-[12px] text-ink-42">{COPY.profile.signOutNote}</p>
+        </div>
       </div>
       <TabBar />
     </main>

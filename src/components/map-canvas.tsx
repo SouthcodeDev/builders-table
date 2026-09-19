@@ -35,8 +35,21 @@ const FALLBACK_STYLE = "mapbox://styles/mapbox/streets-v12";
 // Leaves room for the safe top, the summary card and the tab bar.
 const FIT_PADDING = { top: 24, bottom: 176, left: 48, right: 48 };
 const FIT_MAX_ZOOM = 15;
-// Lifts the selected pin above the pin sheet.
-const SHEET_OFFSET_Y = 96;
+/**
+ * Where the selected pin sits, as an offset from the container centre.
+ *
+ * Two things were wrong with the old +96. Mapbox reads a POSITIVE y as "put the target
+ * BELOW the centre", so it pushed the pin down towards the sheet instead of lifting it
+ * clear. And fitBounds leaves its `padding` on the map — FIT_PADDING is bottom-heavy,
+ * which silently shifts the optical centre up by another (176-24)/2 = 76px, so the
+ * landing spot depended on whether a fit had happened first.
+ *
+ * The ease below now passes its own zero padding, so this number means exactly what it
+ * says. Measured on 390x844: the map is only visible between the header (ends 170) and
+ * the pin sheet (starts 600), so the middle of that band is 385 against a container
+ * centre of 422.
+ */
+const SHEET_OFFSET_Y = 385 - 844 / 2;
 
 const MARKER_SIZE = 34;
 const MARKER_SIZE_SELECTED = 44;
@@ -240,8 +253,14 @@ export default function MapCanvas({
       el.type = "button";
       el.setAttribute("aria-label", p.title);
       const color = brandIds?.includes(p.id) ? POP : HERO;
+      // NEVER set `position` here. mapbox-gl.css pins .mapboxgl-marker at
+      // position:absolute; top:0; left:0 and moves it purely by transform. An inline
+      // position:relative wins over that rule, so the marker keeps its static flow
+      // position inside the container AND gets the transform on top — every marker
+      // after the first drifts by its own flow offset, and the gap grows on zoom.
+      // The +N badge still anchors correctly: the absolute marker is its containing block.
       el.style.cssText =
-        `position:relative;display:grid;place-items:center;width:${MARKER_SIZE}px;height:${MARKER_SIZE}px;` +
+        `display:grid;place-items:center;width:${MARKER_SIZE}px;height:${MARKER_SIZE}px;` +
         `border-radius:999px;background:${color};border:3px solid #fff;` +
         `box-shadow:0 8px 16px -8px rgba(10,10,10,0.5);cursor:pointer;padding:0;` +
         `transition:width 150ms ease,height 150ms ease,opacity 150ms ease`;
@@ -279,7 +298,8 @@ export default function MapCanvas({
           if (userDotRef.current) userDotRef.current.remove();
           const el = document.createElement("span");
           el.className = "mapboxgl-user-location-dot";
-          el.style.cssText = "position:relative;display:block";
+          // Same rule as the place markers above — no inline position.
+          el.style.cssText = "display:block";
           userDotRef.current = new mapboxgl.Marker({ element: el })
             .setLngLat([longitude, latitude])
             .addTo(map);
@@ -304,7 +324,14 @@ export default function MapCanvas({
     const map = mapRef.current;
     const p = placesRef.current.find((x) => x.id === selectedId);
     if (!map || !p) return;
-    map.easeTo({ center: [p.lng, p.lat], offset: [0, SHEET_OFFSET_Y], duration: 450 });
+    map.easeTo({
+      center: [p.lng, p.lat],
+      // Explicit, so the leftover bottom-heavy padding from fitBounds does not get
+      // added to the offset above.
+      padding: { top: 0, bottom: 0, left: 0, right: 0 },
+      offset: [0, SHEET_OFFSET_Y],
+      duration: 450,
+    });
   }, [selectedId, applySelection]);
 
   if (!token) {
