@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { CalendarDays } from "lucide-react";
 import { COPY, personById, placeById } from "@/data/seed";
@@ -9,6 +10,7 @@ import { TabBar } from "@/components/tab-bar";
 import { usePlaces } from "@/state/places";
 
 export default function PlansPage() {
+  const router = useRouter();
   const {
     ready, plans, pendingInvite, distanceTo, acceptInvite, declineInvite, pollInvites,
     simulateIncomingInvite,
@@ -40,7 +42,24 @@ export default function PlansPage() {
     return <main className="min-h-dvh flex-1 bg-canvas" />;
   }
 
-  const ordered = [...plans].sort((a, b) => b.createdAtMs - a.createdAtMs);
+  const byNewest = (a: (typeof plans)[number], b: (typeof plans)[number]) =>
+    b.createdAtMs - a.createdAtMs;
+  const ordered = plans.filter((p) => p.status === "going").sort(byNewest);
+  const savedOrdered = plans.filter((p) => p.status === "saved").sort(byNewest);
+
+  const row = (plan: (typeof plans)[number]) => {
+    const place = placeById(plan.placeId);
+    if (!place) return null;
+    const people = plan.withPeople.map((id) => personById(id)).filter((p) => p !== undefined);
+    return (
+      <PlanRow
+        key={plan.id}
+        place={place}
+        people={people}
+        onPress={() => router.push(`/place/${place.id}`)}
+      />
+    );
+  };
 
   const inviteTime =
     pendingInvite && nowMs
@@ -69,7 +88,7 @@ export default function PlansPage() {
             />
           )}
 
-          {ordered.length === 0 && !pendingInvite ? (
+          {ordered.length === 0 && savedOrdered.length === 0 && !pendingInvite ? (
             <div className="flex flex-1 flex-col items-center justify-center gap-4 px-5 text-center">
               <span className="grid h-16 w-16 place-items-center rounded-full bg-canvas-soft">
                 <CalendarDays size={24} strokeWidth={1.75} className="text-muted" aria-hidden />
@@ -82,14 +101,15 @@ export default function PlansPage() {
               </p>
             </div>
           ) : (
-            ordered.map((plan) => {
-              const place = placeById(plan.placeId);
-              if (!place) return null;
-              const people = plan.withPeople
-                .map((id) => personById(id))
-                .filter((p) => p !== undefined);
-              return <PlanRow key={plan.id} place={place} people={people} />;
-            })
+            <>
+              {ordered.map(row)}
+              {savedOrdered.length > 0 && (
+                <>
+                  <div className="kicker shrink-0 pt-2">{COPY.plans.savedHeading}</div>
+                  {savedOrdered.map(row)}
+                </>
+              )}
+            </>
           )}
         </div>
       </div>

@@ -11,7 +11,7 @@ export {
 export { COPY } from './copy'
 export {
   demoNow, startOf, minutesUntil, formatLocal, formatDayLabel, isStartingSoon,
-  daypart, weekday, timeLabel, closingLabel,
+  daypart, weekday, weekdayOf, clock24, timeLabel, closingLabel,
 } from './schedule'
 export { distanceKm, formatDistance, directionsUrl } from './geo'
 

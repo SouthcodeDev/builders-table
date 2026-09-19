@@ -109,3 +109,19 @@ export function daypart(tz: string, now = demoNow()): 'morning' | 'afternoon' | 
   if (h < 17) return 'afternoon'
   return 'evening'
 }
+
+/** The event's own weekday in its city's tz — "Friday". Not today's weekday. */
+export function weekdayOf(place: Place, now = demoNow()): string {
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: CITIES[place.city].tz,
+    weekday: 'long',
+  }).format(startOf(place, now))
+}
+
+/** 24-hour wall clock in the place's tz, offset by minutes — "17:45". */
+export function clock24(place: Place, offsetMin = 0, now = demoNow()): string {
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: CITIES[place.city].tz,
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  }).format(new Date(startOf(place, now).getTime() + offsetMin * 60000))
+}

@@ -61,7 +61,6 @@ type PlacesContextValue = {
   plans: Plan[];
   invites: Invite[];
   pendingInvite: { invite: Invite; from: Person; place: Place } | null;
-  lastSentNames: string[];
   passport: Passport | null;
   deckPicks: Record<string, DeckVerdict>;
   attendanceFor: (placeId: string) => Attendance;
@@ -71,6 +70,8 @@ type PlacesContextValue = {
   setInterests: (tags: InterestTag[]) => void;
   requestPersona: () => Promise<void>;
   addPlan: (placeId: string, status: Plan["status"], withPeople?: string[]) => void;
+  removePlan: (placeId: string) => void;
+  planFor: (placeId: string) => Plan | undefined;
   sendInvite: (placeId: string, toUserIds: string[], note: string) => Promise<void>;
   acceptInvite: (inviteId: string) => void;
   declineInvite: (inviteId: string) => void;
@@ -114,7 +115,6 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [deckPicks, setDeckPicks] = useState<Record<string, DeckVerdict>>({});
-  const [lastSentNames, setLastSentNames] = useState<string[]>([]);
 
   const userRef = useRef(user);
   useEffect(() => {
@@ -258,9 +258,16 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
+  const removePlan = useCallback((placeId: string) => {
+    setPlans((prev) => {
+      const next = prev.filter((p) => p.placeId !== placeId);
+      persist(STORAGE.plans, next);
+      return next;
+    });
+  }, []);
+
   const sendInvite = useCallback(async (placeId: string, toUserIds: string[], note: string) => {
     const me = userRef.current;
-    setLastSentNames(toUserIds.map((id) => personById(id)?.name ?? id));
     const sb = supabaseInvites();
     if (!sb || toUserIds.length === 0) return;
     const { error } = await sb.from("invites").insert(
@@ -372,6 +379,13 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
 
   const friends = mode === "active" ? FRIENDS : [];
 
+  // ponytail: going and saved are one row, so a place is either/or — bookmarking a
+  // plan you're going to is a no-op by design. Split into two lists if that changes.
+  const planFor = useCallback(
+    (placeId: string) => plans.find((p) => p.placeId === placeId),
+    [plans],
+  );
+
   const attendanceFor = useCallback(
     (placeId: string): Attendance => ({
       base: ATTENDANCE_BASE[placeId] ?? 0,
@@ -458,7 +472,6 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     plans,
     invites,
     pendingInvite,
-    lastSentNames,
     passport,
     deckPicks,
     attendanceFor,
@@ -468,6 +481,8 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     setInterests,
     requestPersona,
     addPlan,
+    removePlan,
+    planFor,
     sendInvite,
     acceptInvite,
     declineInvite,

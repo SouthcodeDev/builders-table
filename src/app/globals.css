@@ -61,7 +61,7 @@
    * above the bar (the map pin sheet) offsets by it. One number, two consumers.
    *   8 nav pad-top + 8 link pad-top + 20 icon + 6 gap + 12 label = 54
    */
-  --tabbar-h: calc(54px + max(env(safe-area-inset-bottom), 24px));
+  --tabbar-h: calc(64px + max(env(safe-area-inset-bottom), 24px));
 }
 
 /* Design tokens — DESIGN_HANDOFF.md §4 + Places4 screen set */
@@ -81,12 +81,14 @@
   --color-canvas-soft: #f5f4fa;
   --color-track: #e8e5f1;
 
-  --color-hero: #5100ff;
+  --color-hero: #FFBEBE;
   --color-hero-deep: #2a0085;
   --color-hero-soft: #b9a6ff;
-  --color-accent: #3552e0;
+  --color-accent: #CDEA9D;
   --color-teal: #0e6e77;
-  --color-pop: #ff4a00;
+  --color-pop: #FF5C29;
+  /* Secondary-affirmative outline on the event sheet (Places4 detail redraw) */
+  --color-lime: #a6c84c;
   --color-deck-deep: #3b00b8;
   --color-deck-card: #3b1fae;
   --color-muted: #6e6e76;
