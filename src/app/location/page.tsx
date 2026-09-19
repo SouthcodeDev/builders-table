@@ -3,28 +3,45 @@
 import { useRouter } from "next/navigation";
 import { Check, LocateFixed, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { CITIES, COPY, areasIn, placesIn } from "@/data/seed";
+import { CITIES, COPY, areasIn, placesIn, type City } from "@/data/seed";
 import { distanceKm } from "@/data/geo";
 import { usePlaces } from "@/state/places";
 
+const COUNTRY_OF: Record<City, string> = {
+  "cape-town": "South Africa",
+  tokyo: "Japan",
+};
+
 export default function LocationPage() {
   const router = useRouter();
-  const { city, area, radiusKm, setArea, setRadiusKm } = usePlaces();
+  const { city, area, radiusKm, setArea, setRadiusKm, setCity } = usePlaces();
   const [query, setQuery] = useState("");
+  const [pickedCity, setPickedCity] = useState<City>(city);
   const [picked, setPicked] = useState<string | null>(area);
   const [pickedRadius, setPickedRadius] = useState<number | null>(radiusKm);
   const [locating, setLocating] = useState(false);
 
+  const pickCity = (c: City) => {
+    if (c === pickedCity) return;
+    // Areas don't carry across cities — drop the area pick, keep the radius.
+    setPickedCity(c);
+    setPicked(null);
+  };
+
   const areas = useMemo(() => {
-    const center = CITIES[city].center;
-    return areasIn(city)
+    const center = CITIES[pickedCity].center;
+    // Tokyo has no curated rows yet — fall back to the city's fixed area list so
+    // the selector still shows what will be there once curation lands.
+    const names =
+      areasIn(pickedCity).length > 0 ? areasIn(pickedCity) : CITIES[pickedCity].areas;
+    return names
       .filter((a) => a.toLowerCase().includes(query.toLowerCase()))
       .map((a) => {
-        const inArea = placesIn(city).filter((p) => p.area === a);
+        const inArea = placesIn(pickedCity).filter((p) => p.area === a);
         const nearest = Math.min(...inArea.map((p) => distanceKm(center, p)), 999);
         return { area: a, count: inArea.length, km: Math.round(nearest * 10) / 10 };
       });
-  }, [city, query]);
+  }, [pickedCity, query]);
 
   const useMyLocation = () => {
     if (locating || typeof navigator === "undefined" || !navigator.geolocation) return;
@@ -32,7 +49,7 @@ export default function LocationPage() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const here = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        const nearest = placesIn(city)
+        const nearest = placesIn(pickedCity)
           .map((p) => ({ area: p.area, km: distanceKm(here, p) }))
           .sort((a, b) => a.km - b.km)[0];
         if (nearest) setPicked(nearest.area);
@@ -44,6 +61,7 @@ export default function LocationPage() {
   };
 
   const apply = () => {
+    if (pickedCity !== city) setCity(pickedCity);
     setArea(picked);
     setRadiusKm(pickedRadius);
     router.push("/discover");
@@ -60,6 +78,35 @@ export default function LocationPage() {
         >
           <X size={16} strokeWidth={2.25} aria-hidden />
         </button>
+      </div>
+
+      {/* Country / city — Tokyo is the only other city in the demo */}
+      <p className="kicker mt-5">{COPY.location.cityHeading}</p>
+      <div className="mt-2.5 flex flex-col gap-2">
+        {(Object.keys(CITIES) as City[]).map((c) => {
+          const isPicked = pickedCity === c;
+          return (
+            <button
+              key={c}
+              onClick={() => pickCity(c)}
+              className="flex items-center gap-3 rounded-tile bg-canvas-soft px-4 py-3 text-left"
+            >
+              <span className="min-w-0 flex-1">
+                <span className={`block text-[15px] ${isPicked ? "font-medium" : ""}`}>
+                  {CITIES[c].label}
+                </span>
+                <span className="block text-xs text-muted">{COUNTRY_OF[c]}</span>
+              </span>
+              <span
+                className={`grid h-5 w-5 shrink-0 place-items-center rounded-full ${
+                  isPicked ? "bg-hero" : "border border-ink-16"
+                }`}
+              >
+                {isPicked && <Check size={13} strokeWidth={3} className="text-white" aria-hidden />}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       <div className="relative mt-4">
@@ -89,7 +136,7 @@ export default function LocationPage() {
             {locating ? "Finding you…" : COPY.location.useMyLocation}
           </span>
           <span className="mt-0.5 block text-xs text-white/80">
-            {CITIES[city].label}
+            {CITIES[pickedCity].label}
           </span>
         </span>
       </button>
@@ -142,7 +189,7 @@ export default function LocationPage() {
         onClick={apply}
         className="button mt-auto flex h-[54px] w-full items-center justify-center bg-pop text-base font-medium text-white shadow-pop"
       >
-        {COPY.location.cta(picked ?? CITIES[city].label, pickedRadius)}
+        {COPY.location.cta(picked ?? CITIES[pickedCity].label, pickedRadius)}
       </button>
     </main>
   );
