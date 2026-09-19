@@ -35,13 +35,14 @@ import {
   type Place,
   type Plan,
   type InterestTag,
+  RICOCHETS,
+  type Ricochet,
 } from "@/data/seed";
 import {
   BUSINESS, EMPTY_DRAFT, draftToPlace, registerPlaces, type EventDraft,
 } from "@/data/seed";
 import { fallbackPersona as buildFallback, localReason, rankLocally } from "@/data/rank";
 import { distanceKm } from "@/data/geo";
-import { minutesUntil } from "@/data/schedule";
 import { supabaseInvites } from "@/lib/supabase";
 
 type DeviceUser = { id: string; name: string; initials: string };
@@ -67,6 +68,16 @@ type PlacesContextValue = {
   passport: Passport | null;
   deckPicks: Record<string, DeckVerdict>;
   attendanceFor: (placeId: string) => Attendance;
+  /** placeId → friends going. Stable identity, so the map can keep it in a dep array. */
+  friendCounts: Record<string, number>;
+  /** stampId → the photo the user picked, as a downscaled data URL. */
+  stampPhotos: Record<string, string>;
+  setStampPhoto: (stampId: string, dataUrl: string) => void;
+  /** Seed ricochets plus the ones chained in the app, newest of yours first. */
+  ricochets: Ricochet[];
+  publishRicochet: (r: Ricochet) => void;
+  /** Copy a ricochet's stops into Plans. Never touches the original. */
+  takeRicochet: (id: string) => number;
   distanceTo: (place: Place) => number;
   reasonFor: (placeId: string) => string;
   signIn: (mode: Mode) => void;
@@ -124,6 +135,8 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
   const [invites, setInvites] = useState<Invite[]>([]);
   const [deckPicks, setDeckPicks] = useState<Record<string, DeckVerdict>>({});
   const [myEvents, setMyEvents] = useState<Place[]>([]);
+  const [stampPhotos, setStampPhotos] = useState<Record<string, string>>({});
+  const [myRicochets, setMyRicochets] = useState<Ricochet[]>([]);
   const [draft, setDraftState] = useState<EventDraft>(EMPTY_DRAFT);
 
   const userRef = useRef(user);
@@ -180,6 +193,10 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
       }
       const storedDraft = read<EventDraft>(STORAGE.draft);
       if (storedDraft) setDraftState(storedDraft);
+      const storedPhotos = read<Record<string, string>>(STORAGE.stampPhotos);
+      if (storedPhotos) setStampPhotos(storedPhotos);
+      const storedRicochets = read<Ricochet[]>(STORAGE.ricochets);
+      if (storedRicochets) setMyRicochets(storedRicochets);
       setReady(true);
     });
   }, []);
@@ -229,31 +246,39 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     persist(STORAGE.interests, tags);
   }, []);
 
+  /**
+   * The one model call in the app. It returns PROSE ONLY — the label and the sentence
+   * on the persona card. Ordering and reason lines are composed here from the local
+   * ranking, which is what has always actually driven them, so nothing the model says
+   * can move an event or invent a reason.
+   */
   const requestPersona = useCallback(async () => {
     setPersonaLoading(true);
     persist(STORAGE.personaLoading, true);
-    const candidates = placesIn("cape-town").map((p) => ({
-      id: p.id,
-      title: p.title,
-      tags: p.tags as string[],
-      startOffset: minutesUntil(p),
-      distanceKm: distanceKm(CITIES["cape-town"].center, p),
-      price: p.price,
-    }));
+    const local = buildFallback(placesIn("cape-town"), interests);
     try {
       const res = await fetch("/api/persona", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ interests, city: "cape-town", candidates }),
+        body: JSON.stringify({ interests }),
       });
       if (!res.ok) throw new Error(`persona ${res.status}`);
-      const data = (await res.json()) as PersonaResult;
+      const prose = (await res.json()) as {
+        label?: string;
+        sentence?: string;
+        fallback?: boolean;
+      };
+      const data: PersonaResult = {
+        ...local,
+        label: prose.label ?? local.label,
+        sentence: prose.sentence ?? local.sentence,
+        fallback: prose.fallback !== false,
+      };
       setPersona(data);
       persist(STORAGE.persona, data);
     } catch {
-      const fb = buildFallback(placesIn("cape-town"), interests);
-      setPersona(fb);
-      persist(STORAGE.persona, fb);
+      setPersona(local);
+      persist(STORAGE.persona, local);
     } finally {
       setPersonaLoading(false);
       persist(STORAGE.personaLoading, false);
@@ -272,6 +297,38 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
       });
     },
     [],
+  );
+
+  /**
+   * Remix. Copies a ricochet's stops into your own Plans as ordinary plans, so you
+   * can cut and reorder them without the original changing under whoever chained it.
+   * Returns how many stops were new — a stop you were already going to is left alone.
+   */
+  const takeRicochet = useCallback(
+    (id: string) => {
+      const ricochet = [...myRicochets, ...RICOCHETS].find((r) => r.id === id);
+      if (!ricochet) return 0;
+      // Counted here, off the current plans, rather than inside the state updater —
+      // an updater's body runs when React decides to and twice under StrictMode, so
+      // anything read out of it to return to the caller is unreliable.
+      const have = new Set(plans.map((p) => p.placeId));
+      const extra = ricochet.stops
+        .filter((stop) => placeById(stop.placeId) && !have.has(stop.placeId))
+        .map((stop, i) => ({
+          id: `plan-ric-${id}-${stop.placeId}`,
+          placeId: stop.placeId,
+          withPeople: [] as string[],
+          status: "going" as const,
+          createdAtMs: Date.now() + i,
+        }));
+      if (extra.length > 0) {
+        const next = [...plans, ...extra];
+        setPlans(next);
+        persist(STORAGE.plans, next);
+      }
+      return extra.length;
+    },
+    [myRicochets, plans],
   );
 
   const removePlan = useCallback((placeId: string) => {
@@ -439,6 +496,53 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     [mode],
   );
 
+  /**
+   * The +N bubble on a map marker. Seeded attendance plus anyone you have since
+   * made a plan with, so an invite sent during the demo shows up on the map too.
+   * Memoised because the map takes it as an effect dependency — rebuilt every
+   * render, it would tear down and recreate every marker on every render.
+   */
+  const friendCounts = useMemo(() => {
+    // A fresh account has no friends (AGENTS.md §1.3) and must show no social proof.
+    if (mode !== "active") return {};
+    // Union per place, so someone who is both seeded and on a plan counts once.
+    const byPlace = new Map<string, Set<string>>();
+    const add = (placeId: string, ids: string[]) => {
+      const set = byPlace.get(placeId) ?? new Set<string>();
+      ids.filter((id) => personById(id)).forEach((id) => set.add(id));
+      byPlace.set(placeId, set);
+    };
+    Object.entries(ATTENDANCE).forEach(([placeId, ids]) => add(placeId, ids));
+    plans.forEach((p) => add(p.placeId, p.withPeople));
+
+    const out: Record<string, number> = {};
+    byPlace.forEach((set, placeId) => {
+      if (set.size > 0) out[placeId] = set.size;
+    });
+    return out;
+  }, [mode, plans]);
+
+  const setStampPhoto = useCallback((stampId: string, dataUrl: string) => {
+    setStampPhotos((prev) => {
+      const next = { ...prev, [stampId]: dataUrl };
+      // A picked photo is the largest thing this app stores. persist() swallows a
+      // quota error, which is the right call — the card still works from memory for
+      // the rest of the session, it just will not survive a cold reload.
+      persist(STORAGE.stampPhotos, next);
+      return next;
+    });
+  }, []);
+
+  const publishRicochet = useCallback((r: Ricochet) => {
+    setMyRicochets((prev) => {
+      const next = [{ ...r, mine: true }, ...prev.filter((x) => x.id !== r.id)];
+      persist(STORAGE.ricochets, next);
+      return next;
+    });
+  }, []);
+
+  const ricochets = useMemo(() => [...myRicochets, ...RICOCHETS], [myRicochets]);
+
   const distanceTo = useCallback(
     (place: Place) => distanceKm(CITIES[city].center, place),
     [city],
@@ -520,6 +624,12 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     passport,
     deckPicks,
     attendanceFor,
+    friendCounts,
+    stampPhotos,
+    setStampPhoto,
+    ricochets,
+    publishRicochet,
+    takeRicochet,
     distanceTo,
     reasonFor,
     signIn,

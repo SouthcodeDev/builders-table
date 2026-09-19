@@ -17,6 +17,10 @@ export {
   daypart, weekday, weekdayOf, clock24, timeLabel, closingLabel,
 } from './schedule'
 export { distanceKm, formatDistance, directionsUrl } from './geo'
+export { categoryFor, CATEGORY_KEYS, type Category } from './categories'
+export { LEVELS, levelFor, collection, type LevelDef, type LevelState } from './levels'
+export { RICOCHETS, ricochetById, type Ricochet, type RicochetStop } from './ricochets'
+export { MARKER_ICONS } from './marker-icons'
 
 import { PLACES } from './places'
 import { ACTIVE_PLANS } from './people'
@@ -48,4 +52,6 @@ export const STORAGE = {
   tab: 'places.tab',
   myEvents: 'places.myEvents',
   draft: 'places.draft',
+  ricochets: 'places.ricochets',
+  stampPhotos: 'places.stampPhotos',
 } as const

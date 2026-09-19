@@ -20,6 +20,7 @@ import { EventCard } from "@/components/event-card";
 import { LogoMark } from "@/components/logo-mark";
 import MapView from "@/components/map-view";
 import { PinSheet } from "@/components/pin-sheet";
+import { PlaceSearch } from "@/components/place-search";
 import { Segmented } from "@/components/segmented";
 import { TabBar } from "@/components/tab-bar";
 import { usePlaces } from "@/state/places";
@@ -30,7 +31,7 @@ export default function DiscoverPage() {
   const router = useRouter();
   const {
     ready, mode, user, interests, city, area, radiusKm, events, myEvents,
-    attendanceFor, distanceTo,
+    attendanceFor, distanceTo, friendCounts, setCity,
   } = usePlaces();
   const [tab, setTab] = useState<Tab>("map");
   const [pinId, setPinId] = useState<string | null>(null);
@@ -77,60 +78,11 @@ export default function DiscoverPage() {
       }).format(new Date())
     : "";
 
+  const inTokyo = city === "tokyo";
+
   return (
     <main className="flex min-h-dvh flex-1 flex-col bg-surface">
-      {city === "tokyo" ? (
-        <div className="flex min-h-0 flex-1 flex-col px-4 pt-safe">
-          <div className="pt-4">
-            <span className="inline-flex items-center gap-2 rounded-full bg-canvas px-3.5 py-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-hero" />
-              <span className="text-xs font-medium tracking-[0.04em]">
-                {COPY.tokyo.chip(`${tokyoClock} JST`)}
-              </span>
-            </span>
-          </div>
-          <div className="pt-3.5">
-            <p className="kicker">
-              {weekday(cityMeta.tz)} {daypart(cityMeta.tz)} · {cityMeta.label}
-            </p>
-            <h1 className="mt-1.5 text-2xl font-medium leading-[1.12] tracking-[-0.02em]">
-              {COPY.tokyo.title}
-            </h1>
-          </div>
-          <div className="flex min-h-0 flex-1 flex-col gap-3.5 overflow-y-auto pb-4 pt-4">
-            {events.length === 0 ? (
-              <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
-                <p className="text-[19px] font-medium tracking-[-0.015em]">
-                  {COPY.discover.emptyTitle}
-                </p>
-                <p className="max-w-[260px] text-sm leading-[1.5] text-ink-50">
-                  {COPY.discover.emptySub}
-                </p>
-              </div>
-            ) : (
-              events.map((p, i) => (
-                <EventCard
-                  key={p.id}
-                  place={p}
-                  distanceKm={distanceTo(p)}
-                  attendance={attendanceFor(p.id)}
-                  variant={i === 0 ? "featured" : "compact"}
-                  timePill={i === 0 ? `${formatLocal(p)} JST` : undefined}
-                  subline={i === 0 ? p.blurb : undefined}
-                  onPress={() => router.push(`/place/${p.id}`)}
-                />
-              ))
-            )}
-            <div className="flex items-center gap-3 rounded-big bg-canvas-soft p-4">
-              <span className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full bg-hero">
-                <LogoMark size={16} color="#FFFFFF" />
-              </span>
-              <span className="text-[13px] leading-[1.4] text-ink-60">{COPY.tokyo.note}</span>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="relative flex flex-1 flex-col pt-safe">
+      <div className="relative flex flex-1 flex-col pt-safe">
           {/* Header — the greeting collapses on map; the switcher rises into its place. */}
           <div className="relative z-10">
             <AnimatePresence initial={false}>
@@ -143,14 +95,29 @@ export default function DiscoverPage() {
                   transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="flex items-start justify-between gap-3 px-4 pt-[18px]">
+                  {/* The "one more thing" beat now lives here rather than on its own
+                      screen — same copy, but the map and the search stay reachable so
+                      you can get back out again. */}
+                  {inTokyo && (
+                    <div className="px-4 pt-[18px]">
+                      <span className="inline-flex items-center gap-2 rounded-full bg-canvas px-3.5 py-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-hero" />
+                        <span className="text-xs font-medium tracking-[0.04em]">
+                          {COPY.tokyo.chip(`${tokyoClock} JST`)}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                  <div className={`flex items-start justify-between gap-3 px-4 ${inTokyo ? "pt-3.5" : "pt-[18px]"}`}>
                     <div className="min-w-0">
                       <p className="kicker">
                         {weekday(cityMeta.tz)} {daypart(cityMeta.tz)} · {cityMeta.label}
                         {area ? ` · ${area}` : ""}
                       </p>
                       <h1 className="mt-1.5 text-2xl font-medium leading-[1.12] tracking-[-0.02em]">
-                        {mode === "active" ? (
+                        {inTokyo ? (
+                          COPY.tokyo.title
+                        ) : mode === "active" ? (
                           <>
                             Evening, {firstName}.
                             <br />
@@ -182,7 +149,17 @@ export default function DiscoverPage() {
                 </motion.div>
               )}
             </AnimatePresence>
+            {/* Tokyo's front door, and the only search in the app (AGENTS.md §1.9 —
+                this filters the seed, it does not call a places API). */}
             <div className="px-4 pt-4">
+              <PlaceSearch
+                city={city}
+                onPickCity={setCity}
+                onPickPlace={(id) => router.push(`/place/${id}`)}
+                onSurface={tab === "map"}
+              />
+            </div>
+            <div className="px-4 pt-2.5">
               <Segmented
                 options={[
                   { id: "map" as Tab, label: COPY.discover.mapTab },
@@ -244,9 +221,21 @@ export default function DiscoverPage() {
                       distanceKm={distanceTo(p)}
                       attendance={attendanceFor(p.id)}
                       variant={i === 0 ? "featured" : "compact"}
+                      timePill={inTokyo && i === 0 ? `${formatLocal(p)} JST` : undefined}
+                      subline={inTokyo && i === 0 ? p.blurb : undefined}
                       onPress={() => router.push(`/place/${p.id}`)}
                     />
                   ))
+                )}
+                {inTokyo && n > 0 && (
+                  <div className="flex items-center gap-3 rounded-big bg-canvas-soft p-4">
+                    <span className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full bg-hero">
+                      <LogoMark size={16} color="#FFFFFF" />
+                    </span>
+                    <span className="text-[13px] leading-[1.4] text-ink-60">
+                      {COPY.tokyo.note}
+                    </span>
+                  </div>
                 )}
               </div>
             </>
@@ -260,6 +249,8 @@ export default function DiscoverPage() {
                   selectedId={bounceId ?? pinId}
                   onSelectPin={setPinId}
                   brandIds={brandIds}
+                  friendCounts={friendCounts}
+                  onCityChange={setCity}
                 />
               </div>
               <div className="fixed inset-x-0 bottom-tabbar z-20 mb-[104px] flex justify-center">
@@ -281,8 +272,7 @@ export default function DiscoverPage() {
               </div>
             </>
           )}
-        </div>
-      )}
+      </div>
 
       {/* pin sheet */}
       {pinPlace && !bouncePlace && tab === "map" && (

@@ -2,10 +2,20 @@
 
 import type { PassportStamp } from "@/data/seed";
 
-export function StampTile({ stamp }: { stamp: PassportStamp }) {
+export function StampTile({
+  stamp,
+  onPress,
+}: {
+  stamp: PassportStamp;
+  /** Opens the shareable card. Without it the tile stays a plain tile. */
+  onPress?: () => void;
+}) {
+  const Tag = onPress ? "button" : "div";
   return (
-    <div
-      className="photo relative overflow-hidden rounded-tile"
+    <Tag
+      onClick={onPress}
+      aria-label={onPress ? `Share ${stamp.title}` : undefined}
+      className="photo relative block overflow-hidden rounded-tile text-left"
       style={{ backgroundImage: `url(${stamp.image})` }}
     >
       <span className="absolute inset-x-0 bottom-0 h-[62%] bg-gradient-to-t from-[rgba(8,7,14,0.8)] to-transparent" />
@@ -17,6 +27,6 @@ export function StampTile({ stamp }: { stamp: PassportStamp }) {
           {stamp.title}
         </span>
       </span>
-    </div>
+    </Tag>
   );
 }

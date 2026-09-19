@@ -144,7 +144,30 @@ export type Invite = {
   createdAtMs: number
 }
 
-export type PassportStamp = { title: string; dateLabel: string; image: string }
+/**
+ * What a stamp was for. Earned by turning up somewhere real — never by opening the
+ * app. Drives the band across the bottom of the share card.
+ *   bounce — you took a bounce, i.e. something outside the tags you picked
+ *   social — you went with people
+ *   solo   — you went on your own, which is also fine and the copy says so
+ */
+export type StampKind = 'bounce' | 'social' | 'solo'
+
+export type PassportStamp = {
+  id: string
+  /** Position in the collection. "Stamp 02" on the share card. */
+  number: number
+  title: string
+  dateLabel: string
+  image: string
+  kind: StampKind
+  /** Areas the day actually touched — the share headline lists them. */
+  areas: string[]
+  /** Hours spent out. Real time, not app time. */
+  hours: number
+  /** How many friends were there. */
+  withFriends: number
+}
 
 export type Passport = {
   stats: { places: number; withFriends: number; cities: number }

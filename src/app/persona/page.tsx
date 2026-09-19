@@ -58,7 +58,7 @@ export default function PersonaPage() {
           {persona.sentence}
         </p>
         <p className="max-w-[290px] text-[13px] leading-[1.5] text-white/78">
-          {COPY.persona.footnote}
+          {COPY.persona.subcopy}
         </p>
       </div>
       <button

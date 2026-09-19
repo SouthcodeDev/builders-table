@@ -15,6 +15,8 @@ export default function MapView({
   onSelectPin,
   height,
   brandIds,
+  friendCounts,
+  onCityChange,
 }: {
   city: City;
   places: Place[];
@@ -22,6 +24,8 @@ export default function MapView({
   onSelectPin?: (placeId: string | null) => void;
   height?: number;
   brandIds?: string[];
+  friendCounts?: Record<string, number>;
+  onCityChange?: (city: City) => void;
 }) {
   return (
     <MapCanvas
@@ -31,6 +35,8 @@ export default function MapView({
       onSelectPin={onSelectPin}
       height={height}
       brandIds={brandIds}
+      friendCounts={friendCounts}
+      onCityChange={onCityChange}
     />
   );
 }

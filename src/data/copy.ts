@@ -51,7 +51,9 @@ export const COPY = {
     kicker: (labels: string[]) =>
       labels.length > 0 ? `${labels.join(', ')} said yes to` : 'Your picks said yes to',
     accept: "Let's jump in",
-    footnote: "This shifts every time you say yes or no to something — it's a read, not a label.",
+    // Static, deliberately. The model writes the sentence above this and nothing else
+    // — a generated subcopy had nothing true to be grounded in on a new account.
+    subcopy: "We're finding the things that make you move.",
   },
   discover: {
     findForMe: "What's Bouncing?",
@@ -200,6 +202,76 @@ export const COPY = {
     openLabel: 'Saved places',
     emptyTitle: 'Nothing saved yet.',
     emptySub: 'Say yes to something on the deck and it lands here.',
+  },
+  stamp: {
+    // The band across the bottom of the share card. §1.2 forbids a streak, so this
+    // names what the stamp WAS — a fact about one day — instead of counting days in
+    // a row. Nothing here decays and nothing punishes a gap.
+    band: {
+      bounce: 'Out of your usual',
+      social: 'Out with people',
+      solo: 'You showed up',
+    } as const,
+    number: (n: number) => `Stamp ${String(n).padStart(2, '0')}`,
+    headline: {
+      bounce: (areas: string) => `Just bounced around ${areas}.`,
+      social: (areas: string) => `Spent it around ${areas}.`,
+      solo: (areas: string) => `Took yourself around ${areas}.`,
+    } as const,
+    hours: (h: number, friends: number) =>
+      friends > 0
+        ? `${h} ${h === 1 ? 'hour' : 'hours'} spent connecting`
+        : `${h} ${h === 1 ? 'hour' : 'hours'} spent out`,
+    addPhoto: 'Add your photo',
+    replacePhoto: 'Change photo',
+    photoPrompt: 'Pick the one you took there.',
+    share: 'Share this stamp',
+    sharing: 'Building the image…',
+    shareFailed: 'Could not build the image — try again.',
+    saved: 'Saved to your photos.',
+  },
+  levels: {
+    kicker: 'Collection',
+    level: (n: number, name: string) => `Level ${n} · ${name}`,
+    toNext: (n: number, name: string) =>
+      `${n} more ${n === 1 ? 'place' : 'places'} to ${name}`,
+    maxed: 'Every level, collected.',
+    bounced: 'Outside your usual',
+    withPeople: 'With people',
+    areas: 'Areas',
+    // Says out loud what §1.2 requires, where a user can read it.
+    footnote: 'Earned by turning up somewhere, never by opening the app. No streaks.',
+  },
+  ricochets: {
+    tab: 'Ricochets',
+    kicker: 'Someone already worked it out',
+    title: 'Ricochets',
+    sub: 'A day, chained. Three or four stops in an order that actually works.',
+    near: 'Near you',
+    trips: 'Trips',
+    yours: (n: number) => `Yours · ${n}`,
+    chain: 'Chain one of your own',
+    meta: (author: string, stops: number, saved: number) =>
+      `${author} · ${stops} stops · saved ${saved}×`,
+    take: 'Take this Saturday',
+    taken: 'Copied into your Plans',
+    chainedBy: (author: string, saved: number) => `Chained by ${author} · saved ${saved} times`,
+    endToEnd: (km: string) => `${km} km end to end`,
+    openMaps: 'Open in Maps',
+    walkable: (stops: number, km: string) =>
+      `${stops} stops, ${km} km end to end. ${Number(km) <= 5 ? 'Walkable.' : 'Drive between some of these.'}`,
+    emptyYours: 'Nothing chained yet.',
+    emptyYoursSub: 'Chain a day you actually had, and other people can take it.',
+    // builder
+    cancel: 'Cancel',
+    publish: 'Publish',
+    reorderHint: 'Drag the handle to reorder a stop',
+    oneDay: 'One day',
+    aTrip: 'A trip',
+    friendsOnly: 'Friends only',
+    addStop: 'Add a stop from the map, your passport, or search',
+    untitled: 'Untitled ricochet',
+    namePlaceholder: 'Name this day',
   },
   passport: {
     stats: ['Visits', 'With friends', 'Cities'] as const,

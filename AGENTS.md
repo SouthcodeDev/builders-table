@@ -59,7 +59,8 @@ Sam Mbeki, fully populated from seed.
 ```
 Sign in (Google door) → Discover → Find places for me → Swipe deck (6)
   → Event detail → Plan & invite → SEND TO AMEER'S PHONE → Plans → Passport
-  → Tokyo ("one more thing") → back to Cape Town → event starting now
+  → Tokyo (drag the map to Japan, or search "tokyo") → back to Cape Town
+  → event starting now
   → "Let's go Places" → Apple Maps opens → END
 ```
 
@@ -107,19 +108,18 @@ any point, especially on return from Apple Maps.
 ## 1.6 AI rules
 
 **Exactly one live model call exists in this application.** It fires once, at the end of
-Demo 1's onboarding, behind a designed loading state.
+onboarding, behind a designed loading state.
 
 - Route: `/api/persona`. Named by capability, never by provider.
-- Input: the interests the user selected, plus the full curated set for their city as
-  `{id, title, tags, startOffset, distanceKm, price}`.
-- Output: a persona label, a persona sentence, and an ordered array of
-  `{eventId, reason}` — nothing else.
-- The response is validated against a schema and stored. Every downstream surface
-  (persona card, Discover ordering, deck ordering, reason lines) reads the stored blob.
-- On failure, fall back to a deterministic local ranking by tag overlap. The demo must
-  never block on the network.
+- Input: the interests the user selected. Nothing else.
+- Output: a persona label and a persona sentence — **prose only**.
+- **The model does not rank.** Discover ordering, deck ordering and every reason line
+  are deterministic and local (`src/data/rank.ts`). They always were in practice, and
+  they stay that way: local ranking cannot contradict the seed.
+- The response is validated and stored; the persona card reads the stored blob.
+- On failure, fall back to deterministic local prose. The demo must never block on the
+  network.
 
-Demo 2's persona is pre-baked in seed. It does not call the model.
 The swipe deck does not call the model. The organiser screen does not call the model.
 
 Do not add a chatbot. Do not add a second call site.
@@ -170,6 +170,7 @@ lint       : npm run lint               (eslint)
 places     : node scripts/build-places.mjs      data/places.csv → src/data/places.ts
 coords     : node scripts/merge-coords.mjs data/places.kml      KML → the CSV's lat/lng
 audit      : node scripts/audit.mjs             writes AUDIT.md (gitignored, disposable)
+icons      : node scripts/build-marker-icons.mjs  lucide-react → src/data/marker-icons.ts
 ```
 
 `packageManager` is pinned to `npm@11.19.1` in `package.json`. Corepack will refuse a
@@ -183,10 +184,13 @@ src/app/api/persona/        the ONLY route handler and the only server code (§1
 src/app/spike/maps          SETUP.md Step 4 handoff spike (throwaway — delete after Gate 4 on device)
 src/app/spike/map           SETUP.md Step 5 mapbox spike (throwaway — delete after Gate 5 on device)
 src/app/spike/seed          SETUP.md Step 6 seed/time check (throwaway)
-src/components/             15 components. map-view.tsx is the dynamic ssr:false boundary;
+src/components/             19 components. map-view.tsx is the dynamic ssr:false boundary;
                             map-canvas.tsx is the only file that touches mapbox-gl.
                             brand-marks.tsx holds the Apple/Google sign-in marks; every
                             other icon comes from lucide-react.
+                            place-search.tsx is the Discover search field — it filters
+                            the seed and is the Tokyo door (§1.9 bans a places API, not
+                            a filter over curated rows).
 src/data/                   seed layer. seed.ts is the import surface — components import
                             from "@/data/seed", never from the individual files.
 src/state/places.tsx        the single provider. Mode, user, interests, persona, plans,
@@ -199,7 +203,11 @@ scripts/build-places.mjs    data/places.csv → src/data/places.ts. Validates an
                             zero places.
 scripts/merge-coords.mjs    merges a Google My Maps KML export back into data/places.csv
 scripts/audit.mjs           repo self-audit → AUDIT.md
-data/places.csv             the curation source. 54 Cape Town rows.
+scripts/build-marker-icons.mjs  lifts icon paths out of node_modules/lucide-react into
+                            src/data/marker-icons.ts. Map markers are raw DOM and cannot
+                            render React icons; re-run after bumping lucide-react.
+data/places.csv             the curation source. 54 Cape Town rows + 4 Tokyo PLACEHOLDER
+                            rows (§2.7).
 docs/CURATION.md            how to finish the CSV (coordinates, blurbs, images)
 docs/BUILD_ORDER.md         the build sequence
 docs/IMAGE_CREDITS.md       Unsplash attribution
@@ -221,12 +229,15 @@ Import alias: `@/*` → `./src/*` (tsconfig.json).
 - **Vocabulary is two-layer.** `INTEREST_TAGS` is the 12 onboarding chips and the only
   thing ranking matches on. `DETAIL_TAGS` is 16 descriptive tags that are never a chip.
   Both the typechecker and `scripts/build-places.mjs` enforce membership.
-- **`src/data/places.ts` is a PLACEHOLDER SET, not generated.** 6 Cape Town + 3 Tokyo
-  invented rows, kept only so the app compiles and both demo paths run. They are not
-  real events. The real curation is the 54 rows in `data/places.csv`, which cannot be
-  built yet — see §2.7.
-- Happening-now row in the placeholders: `ct-woodstock-open-studio`, offset 22 min.
-  In the CSV it is `ct-clay-hands`, offset 22 min.
+- **`src/data/places.ts` IS generated** by `scripts/build-places.mjs` from the CSV.
+  58 rows: 54 real Cape Town places (coordinates landed) + 4 Tokyo rows titled
+  `PLACEHOLDER — …` standing in until the real Tokyo curation arrives (§2.7).
+- Happening-now row: `ct-clay-hands`, offset 22 min.
+- **Category is derived, never stored.** `src/data/categories.ts` maps the tag
+  vocabulary to a category, most-specific tag first, and that picks the map marker's
+  icon. There is deliberately no `category` column in the CSV — a second vocabulary
+  beside `tags` would drift. All 58 rows resolve to a real category; none fall through
+  to the generic pin.
 - Friends: 4, including `ameer` (the live cross-device invite target). Demo 2 plans: 4.
 - Demo 2's persona, deck order and reason lines are pre-written in `src/data/people.ts`.
   They do not call the model.
@@ -242,7 +253,7 @@ values still have to come from the humans.
 | NEXT_PUBLIC_SUPABASE_URL | src/lib/supabase.ts | client is null; invites stay local |
 | NEXT_PUBLIC_SUPABASE_ANON_KEY | src/lib/supabase.ts | as above |
 | OPENROUTER_API_KEY | src/app/api/persona/route.ts | route returns the local fallback ranking |
-| OPENROUTER_MODEL | src/app/api/persona/route.ts | as above |
+| OPENROUTER_MODEL | src/app/api/persona/route.ts | as above. Set to `z-ai/glm-5.3-flash` |
 | NEXT_PUBLIC_DEMO_NOW | src/data/schedule.ts | clock runs on real time (the normal case) |
 
 Template committed as `.env.local.example`; `.env.local` is gitignored.

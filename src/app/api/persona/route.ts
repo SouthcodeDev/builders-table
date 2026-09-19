@@ -1,69 +1,44 @@
 import { NextResponse } from 'next/server'
-import { INTEREST_TAGS, placeById, type InterestTag } from '@/data/seed'
+import { INTEREST_CHIPS, type InterestTag } from '@/data/seed'
 
-// SETUP.md Step 9 — the only server code in the app. No "use client".
+// The only server code in the app. No "use client".
+//
+// SCOPE: this writes PROSE and nothing else — the one line of the persona card that
+// reads the person back to themselves. It does not rank, order or explain events.
+// Discover order, deck order and every reason line are deterministic and local
+// (src/data/rank.ts), and stay that way: they have been carrying the demo on their
+// own and they cannot contradict the seed.
 
 export const runtime = 'nodejs'
 
-type Candidate = {
-  id: string
-  title: string
-  tags: string[]
-  startOffset: number
-  distanceKm: number
-  price: string | null
-}
+type Body = { interests?: unknown }
 
-type Body = { interests?: unknown; city?: unknown; candidates?: unknown }
+const CHIP_LABEL = new Map(INTEREST_CHIPS.map((c) => [c.tag, c.label.toLowerCase()]))
 
-// The model receives IDs and returns IDs plus prose. It never returns a tag, and
-// nothing it returns is treated as a fact — AGENTS.md §1.5, §1.6.
 const SYSTEM_PROMPT = [
-  'You curate a shortlist of real local events for someone, in their voice.',
-  'Return only JSON matching this schema:',
-  '{"label": string, "sentence": string, "ranked": [{"eventId": string, "reason": string}]}',
-  'Select only from the supplied event IDs. Never invent an event, time, price or place.',
-  'Never invent a tag. The only interests that exist are:',
-  INTEREST_TAGS.join(', ') + '.',
-  'Rank all candidates best-first. reason lines are one sentence, under 15 words.',
-  'label is two or three words. sentence is one warm sentence about their taste.',
+  'You read someone back to themselves in one line, from the interests they picked.',
+  'Return only JSON: {"label": string, "sentence": string}.',
+  'sentence is second person, warm, dry, under 14 words, and ends with a full stop.',
+  'Example: "You\'re a bit of a runner and a foodie."',
+  'label is two or three words naming the type of person, e.g. "Early riser".',
+  'Name only the interests you are given. Never invent a place, time, number or event.',
 ].join(' ')
 
 /**
- * Ranking matches on the twelve onboarding chips only (src/data/vocab.ts). A detail
- * tag arriving here is dropped rather than trusted — it is never a chip, so it can
- * never legitimately be something the user picked.
+ * Deterministic prose for when the model is slow, unreachable or unconfigured. The
+ * persona card must never be blank and must never show an error — this is a demo
+ * that gets driven on stage.
  */
-function isInterest(v: string): v is InterestTag {
-  return (INTEREST_TAGS as readonly string[]).includes(v)
-}
-
-function localFallback(
-  interests: InterestTag[],
-  candidates: Candidate[],
-): {
-  label: string
-  sentence: string
-  ranked: { eventId: string; reason: string }[]
-} {
-  const ranked = [...candidates]
-    .map((c) => {
-      const overlap = c.tags.filter((t) => interests.includes(t as InterestTag)).length
-      const soonness = c.startOffset < 0 ? -1000 : Math.max(0, 600 - c.startOffset) / 600
-      return { c, score: overlap * 10 + soonness }
-    })
-    .sort((a, b) => b.score - a.score)
-    .map(({ c }) => {
-      const hit = c.tags.find((t) => interests.includes(t as InterestTag))
-      const reason = hit
-        ? `You said you're into ${hit.replace('-', ' ')}.`
-        : 'Close by, and on tonight.'
-      return { eventId: c.id, reason }
-    })
+function localPersona(interests: InterestTag[]): { label: string; sentence: string } {
+  const labels = interests.map((t) => CHIP_LABEL.get(t) ?? t.replace('-', ' '))
+  if (labels.length === 0) {
+    return { label: 'Curious', sentence: "Let's start with what's on tonight and see what sticks." }
+  }
+  const first = labels.slice(0, 2)
+  const list = first.length === 2 ? `${first[0]} and ${first[1]}` : first[0]
   return {
     label: 'Curious',
-    sentence: "Let's start with what's on tonight and see what sticks.",
-    ranked,
+    sentence: `You're a bit of a ${list} person.`,
   }
 }
 
@@ -75,28 +50,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'bad json' }, { status: 400 })
   }
 
+  const valid = new Set(INTEREST_CHIPS.map((c) => c.tag as string))
   const interests = Array.isArray(body.interests)
-    ? body.interests.filter((t): t is InterestTag => typeof t === 'string' && isInterest(t))
-    : []
-  const candidates = Array.isArray(body.candidates)
-    ? (body.candidates as Candidate[]).filter(
-        (c) => c && typeof c.id === 'string' && typeof c.title === 'string',
-      )
+    ? body.interests.filter((t): t is InterestTag => typeof t === 'string' && valid.has(t))
     : []
 
   const fail = (why: string) => {
     console.warn(`/api/persona fallback: ${why}`)
-    return NextResponse.json({ ...localFallback(interests, candidates), fallback: true })
+    return NextResponse.json({ ...localPersona(interests), fallback: true })
   }
 
   const key = process.env.OPENROUTER_API_KEY
   const model = process.env.OPENROUTER_MODEL
-  if (!key || !model || candidates.length === 0) {
-    return fail(!key || !model ? 'no credentials' : 'no candidates')
-  }
+  if (!key || !model) return fail('no credentials')
+  if (interests.length === 0) return fail('no interests')
 
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), 6000)
+  // Warm, this call lands in about two seconds. Cold — first request after a deploy,
+  // lambda still starting — it has been measured just under six, which is exactly
+  // when it matters most: the call fires once, during the live run-through. The
+  // loading state is designed and already on screen, so waiting a few seconds longer
+  // beats silently showing the deterministic copy on the one take that counts.
+  const timer = setTimeout(() => controller.abort(), 9000)
   try {
     const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -106,13 +81,19 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         model,
-        temperature: 0.7,
+        temperature: 0.8,
         response_format: { type: 'json_object' },
+        // Not decoration. Left at its default this model spends ~700 tokens thinking
+        // about a one-line answer and takes ~20s — every call aborted below and the
+        // card silently fell back. Capped, the same call lands in about two seconds.
+        reasoning: { effort: 'minimal' },
         messages: [
           { role: 'system', content: SYSTEM_PROMPT },
           {
             role: 'user',
-            content: JSON.stringify({ interests, candidates }),
+            content: JSON.stringify({
+              interests: interests.map((t) => CHIP_LABEL.get(t) ?? t),
+            }),
           },
         ],
       }),
@@ -124,38 +105,22 @@ export async function POST(request: Request) {
     }
     const content = payload.choices?.[0]?.message?.content
     if (!content) return fail('empty completion')
-    const parsed = JSON.parse(content) as {
-      label?: unknown
-      sentence?: unknown
-      ranked?: unknown
-    }
-    if (typeof parsed.label !== 'string' || typeof parsed.sentence !== 'string') {
-      return fail('bad shape')
-    }
-    if (!Array.isArray(parsed.ranked) || parsed.ranked.length === 0) {
-      return fail('no ranked')
-    }
-    const ids = new Set(candidates.map((c) => c.id))
-    const ranked: { eventId: string; reason: string }[] = []
-    for (const r of parsed.ranked) {
-      const item = r as { eventId?: unknown; reason?: unknown }
-      if (typeof item.eventId !== 'string' || !ids.has(item.eventId)) return fail('unknown eventId')
-      if (typeof item.reason !== 'string' || item.reason.length === 0) return fail('bad reason')
-      ids.delete(item.eventId)
-      if (!ranked.some((x) => x.eventId === item.eventId)) {
-        ranked.push({ eventId: item.eventId, reason: item.reason })
-      }
-    }
-    for (const id of ids) {
-      const place = placeById(id)
-      ranked.push({ eventId: id, reason: place ? `Worth a look — ${place.area}.` : 'On tonight.' })
-    }
-    return NextResponse.json({
-      label: parsed.label,
-      sentence: parsed.sentence,
-      ranked,
-      fallback: false,
-    })
+
+    const parsed = JSON.parse(content) as { label?: unknown; sentence?: unknown }
+    // Reasoning at minimal effort occasionally drops a key — take the model's prose
+    // only when it is actually there, and patch the rest from local.
+    const local = localPersona(interests)
+    const label =
+      typeof parsed.label === 'string' && parsed.label.trim().length > 0
+        ? parsed.label.trim()
+        : local.label
+    const sentence =
+      typeof parsed.sentence === 'string' && parsed.sentence.trim().length > 0
+        ? parsed.sentence.trim()
+        : null
+    if (!sentence) return fail('no sentence')
+
+    return NextResponse.json({ label, sentence, fallback: false })
   } catch (err) {
     return fail(err instanceof Error ? err.name : 'unknown error')
   } finally {

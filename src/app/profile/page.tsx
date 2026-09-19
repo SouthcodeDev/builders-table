@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CITIES, COPY, ME_ACTIVE } from "@/data/seed";
+import { COPY, ME_ACTIVE, collection, levelFor } from "@/data/seed";
 import { StampTile } from "@/components/stamp-tile";
 import { TabBar } from "@/components/tab-bar";
 import { LogoMark } from "@/components/logo-mark";
@@ -9,19 +9,18 @@ import { usePlaces } from "@/state/places";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { ready, user, city, passport, setCity } = usePlaces();
+  const { ready, user, passport } = usePlaces();
 
   if (!ready) {
     return <main className="min-h-dvh flex-1 bg-canvas" />;
   }
 
-  const inTokyo = city === "tokyo";
   const initials = user?.initials ?? ME_ACTIVE.initials;
   const displayName = user?.name.split(" ")[0] ?? ME_ACTIVE.name;
 
   return (
     <main className="flex min-h-dvh flex-1 flex-col bg-surface">
-      <div className="flex flex-1 flex-col px-5 pt-safe">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pt-safe pb-4">
         {passport ? (
           <>
             <div className="flex items-center gap-3.5 pt-1">
@@ -56,15 +55,68 @@ export default function ProfilePage() {
               <span className="text-[13px] leading-[1.4] text-ink-60">{passport.note}</span>
             </div>
 
+            {/*
+              The collection. Everything on this block is a count of places actually
+              attended — see src/data/levels.ts for why there is no streak here and
+              why there must never be one (AGENTS.md §1.2).
+            */}
+            {(() => {
+              const counted = collection(passport.stamps);
+              // The seeded passport has 31 visits but only 6 stamp tiles; the level
+              // tracks real attendance, so it reads the visit count.
+              const state = levelFor(passport.stats.places);
+              return (
+                <div className="mt-2.5 rounded-2xl bg-hero-deep p-4 text-white">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="text-[9px] font-medium uppercase tracking-[0.08em] text-white/60">
+                      {COPY.levels.kicker}
+                    </span>
+                    <span className="text-[13px] font-medium">
+                      {COPY.levels.level(state.level.n, state.level.name)}
+                    </span>
+                  </div>
+                  <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-white/20">
+                    <div
+                      className="h-full rounded-full bg-stamp"
+                      style={{ width: `${Math.round(state.progress * 100)}%` }}
+                    />
+                  </div>
+                  <div className="mt-2 text-[11px] text-white/65">
+                    {state.next && state.span !== null
+                      ? COPY.levels.toNext(state.next.at - passport.stats.places, state.next.name)
+                      : COPY.levels.maxed}
+                  </div>
+                  <div className="mt-3 flex gap-2">
+                    {[
+                      { n: counted.bounced, label: COPY.levels.bounced },
+                      { n: passport.stats.withFriends, label: COPY.levels.withPeople },
+                      { n: counted.areas, label: COPY.levels.areas },
+                    ].map((c) => (
+                      <div key={c.label} className="flex-1 rounded-tile bg-white/10 p-2.5">
+                        <div className="text-[17px] font-medium leading-none">{c.n}</div>
+                        <div className="mt-1 text-[9px] font-medium uppercase tracking-[0.06em] text-white/55">
+                          {c.label}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
             <div className="mt-[18px] flex items-baseline justify-between">
               <h2 className="text-[15px] font-medium">{COPY.passport.stampsLabel}</h2>
               <span className="text-[11px] font-medium tracking-[0.08em] text-muted">
                 {passport.stats.places} COLLECTED
               </span>
             </div>
-            <div className="mt-2.5 grid min-h-0 flex-1 grid-cols-3 grid-rows-[repeat(3,minmax(0,1fr))] gap-2">
+            <div className="mt-2.5 grid shrink-0 grid-cols-3 grid-rows-[repeat(3,104px)] gap-2">
               {passport.stamps.map((stamp) => (
-                <StampTile key={stamp.title} stamp={stamp} />
+                <StampTile
+                  key={stamp.id}
+                  stamp={stamp}
+                  onPress={() => router.push(`/stamp/${stamp.id}`)}
+                />
               ))}
               <div className="grid place-items-center rounded-tile bg-canvas-soft text-xs font-medium text-muted">
                 {COPY.passport.more(passport.stampsMore)}
@@ -95,27 +147,6 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* Tokyo / city switch — the "one more thing" */}
-        <div className="mt-4 mb-3 flex items-center gap-3 rounded-big bg-canvas p-4 text-left">
-          <span className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-full bg-hero text-white">
-            <LogoMark size={16} color="#FFFFFF" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="kicker">{inTokyo ? COPY.tokyo.back : COPY.tokyo.entryKicker}</p>
-            <p className="mt-0.5 text-[14px] font-medium leading-[1.3]">
-              {inTokyo ? CITIES["cape-town"].label : COPY.tokyo.title}
-            </p>
-          </div>
-          <button
-            onClick={() => {
-              setCity(inTokyo ? "cape-town" : "tokyo");
-              router.push("/discover");
-            }}
-            className="button bg-ink px-4 py-2.5 text-[13px] font-medium text-white"
-          >
-            {inTokyo ? COPY.tokyo.back : "Go"}
-          </button>
-        </div>
       </div>
       <TabBar />
     </main>

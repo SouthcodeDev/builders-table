@@ -89,6 +89,8 @@
   --color-pop: #FF5C29;
   /* Secondary-affirmative outline on the event sheet (Places4 detail redraw) */
   --color-lime: #a6c84c;
+  /* The band across the bottom of a share card (stamp screen) */
+  --color-stamp: #8cc63f;
   /* Warm tint for the standout stat on the business header (handoff screen 31) */
   --color-accent-warm: #ffc9b3;
   --color-deck-deep: #3b00b8;
