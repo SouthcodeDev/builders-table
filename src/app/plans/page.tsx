@@ -1,7 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { CalendarDays } from "lucide-react";
+import { Bookmark, CalendarDays } from "lucide-react";
 import { COPY, personById, placeById } from "@/data/seed";
 import { InviteReceivedCard } from "@/components/invite-received-card";
 import { PlanRow } from "@/components/plan-row";
@@ -9,6 +10,7 @@ import { TabBar } from "@/components/tab-bar";
 import { usePlaces } from "@/state/places";
 
 export default function PlansPage() {
+  const router = useRouter();
   const {
     ready, plans, pendingInvite, distanceTo, acceptInvite, declineInvite, pollInvites,
     simulateIncomingInvite,
@@ -40,7 +42,24 @@ export default function PlansPage() {
     return <main className="min-h-dvh flex-1 bg-canvas" />;
   }
 
-  const ordered = [...plans].sort((a, b) => b.createdAtMs - a.createdAtMs);
+  // Saved lives behind the bookmark in the header — this page is only real plans.
+  const ordered = plans
+    .filter((p) => p.status === "going")
+    .sort((a, b) => b.createdAtMs - a.createdAtMs);
+
+  const row = (plan: (typeof plans)[number]) => {
+    const place = placeById(plan.placeId);
+    if (!place) return null;
+    const people = plan.withPeople.map((id) => personById(id)).filter((p) => p !== undefined);
+    return (
+      <PlanRow
+        key={plan.id}
+        place={place}
+        people={people}
+        onPress={() => router.push(`/place/${place.id}`)}
+      />
+    );
+  };
 
   const inviteTime =
     pendingInvite && nowMs
@@ -50,12 +69,21 @@ export default function PlansPage() {
   return (
     <main className="flex min-h-dvh flex-1 flex-col bg-surface">
       <div className="flex flex-1 flex-col pt-safe">
-        <button
-          onClick={onHeaderTap}
-          className="px-5 pt-[20px] text-left text-[26px] font-medium tracking-[-0.02em]"
-        >
-          {COPY.plans.title}
-        </button>
+        <div className="flex items-center justify-between px-5 pt-[20px]">
+          <button
+            onClick={onHeaderTap}
+            className="text-left text-[26px] font-medium tracking-[-0.02em]"
+          >
+            {COPY.plans.title}
+          </button>
+          <button
+            onClick={() => router.push("/saved")}
+            aria-label={COPY.saved.openLabel}
+            className="-mr-1.5 grid h-10 w-10 place-items-center rounded-full"
+          >
+            <Bookmark size={21} strokeWidth={2} className="text-pop" aria-hidden />
+          </button>
+        </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-5 pb-4 pt-4">
           {pendingInvite && (
@@ -82,14 +110,7 @@ export default function PlansPage() {
               </p>
             </div>
           ) : (
-            ordered.map((plan) => {
-              const place = placeById(plan.placeId);
-              if (!place) return null;
-              const people = plan.withPeople
-                .map((id) => personById(id))
-                .filter((p) => p !== undefined);
-              return <PlanRow key={plan.id} place={place} people={people} />;
-            })
+            ordered.map(row)
           )}
         </div>
       </div>

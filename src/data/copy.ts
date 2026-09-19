@@ -17,6 +17,10 @@
 // plans.subSome, invite.close, persona.reject) were left out rather than added as
 // dead strings — see AGENTS.md §1.1.
 
+const NUMBER_WORDS: Record<number, string> = {
+  1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six',
+}
+
 export const COPY = {
   splash: {
     wordmark: 'bounce',
@@ -24,7 +28,7 @@ export const COPY = {
     cta: 'Jump In',
   },
   signIn: {
-    title: 'Come in.',
+    title: "Let's bounce.",
     sub: "No profile to build, no bio to write. Two taps and you're looking at tonight.",
     appleDoor: 'Continue with Apple',
     googleDoor: 'Continue with Google',
@@ -64,16 +68,83 @@ export const COPY = {
       'Nothing within range worth leaving the house for. Tomorrow evening looks much better.',
     emptyFootnote: "Or put the phone down — that's a perfectly good evening too.",
   },
+  bounce: {
+    // The control on the map. Not "Bounce this lot" from the handoff — that was
+    // written when a bounce threw the whole set back; now it lands on one place.
+    cta: 'Bounce it',
+    title: 'Bounced.',
+    sub: "Nothing you'd have picked. That's the point — it's two minutes of your evening.",
+    why: 'Nothing you have tapped looks like this.',
+    whyTagged: (tag: string) => `You have never once picked ${tag.replace('-', ' ')}.`,
+    reasonsHeading: 'Not for you?',
+    reasons: [
+      'Too far', 'Too late', 'Not my thing', 'Seen it already',
+      'Too much of a crowd', 'Costs too much',
+    ] as const,
+    check: 'Check it out',
+    skip: 'Skip',
+    exhausted: "That's every corner of the city you don't normally go to. Start again?",
+  },
+  business: {
+    live: 'Live now',
+    liveCount: (n: number) => `${n} ${n === 1 ? 'EVENT' : 'EVENTS'}`,
+    past: 'Past',
+    report: 'Report',
+    last30: 'Last 30 days',
+    // The handoff says "Put something on"; the brief renamed it.
+    create: 'Drop something new',
+    interestedGoing: (i: number, g: number) => `${i} interested · ${g} going`,
+    seatsOf: (g: number, s: number) => `${g} of ${s} seats`,
+    maybeList: (n: number) => `${n} on the maybe list`,
+    pastLine: (up: number, going: number, pct: number) =>
+      `${up} turned up of ${going} going · ${pct}%`,
+    form: {
+      cancel: 'Cancel',
+      step: (i: number, n: number) => `Step ${i} of ${n}`,
+      title: "What's happening?",
+      name: 'Name',
+      line: 'In a line',
+      linePlaceholder: 'What someone should expect',
+      namePlaceholder: 'Sunset supper club',
+      date: 'Date',
+      starts: 'Starts',
+      shape: 'The shape of it',
+      seats: 'Seats',
+      perHead: 'Per head',
+      photo: 'Photo',
+      replace: 'Replace',
+      reach: (n: number) => `Tagged this way, we'd show it to about ${n} people near you.`,
+      cta: 'Preview the card',
+      incomplete: 'Give it a name first',
+    },
+    preview: {
+      kicker: 'Preview · nobody can see this yet',
+      confirm: 'Confirm',
+      cancel: 'Cancel',
+    },
+    report_: {
+      closed: (going: number, up: number) => `Closed · ${going} going · ${up} turned up`,
+      liveState: (i: number, g: number) => `Live · ${i} interested · ${g} going`,
+      turnUp: 'Turn-up rate',
+      impressions: 'Impressions',
+      saved: 'Saved',
+      byDay: 'Interest by day',
+      whoCame: 'Who came',
+      nextKicker: "What we'd do next",
+      again: 'Run it again',
+      export: 'Export',
+      dayAxis: ['-7', '-6', '-5', '-4', '-3', '-2', '-1', 'Day'] as const,
+    },
+  },
   deck: {
     close: 'Close',
     counter: (i: number, total: number) => `${i} OF ${total}`,
-    save: 'Save for later',
+    // Both are icon-only controls now; these are their accessible names.
     pass: 'Pass',
     yes: 'Yes',
-    releaseYes: 'RELEASE TO SAY YES',
-    releaseNote: '— save stays a tap on the card, never a gesture.',
     endKicker: "Six seen · that's the lot",
     endFootnote: "No more cards tonight. That's on purpose. Or put the phone down — that's a perfectly good Tuesday too.",
+    endSaved: 'Check them out',
     endClose: 'Done — close the app',
     endBack: 'Back to Discover',
   },
@@ -82,16 +153,32 @@ export const COPY = {
     goingIn: "I'm in",
     plan: 'Invite friends',
     directions: "Let's Bounce",
+    /** Undo the RSVP. Never 'Cancel' — you are not cancelling the event. */
+    countMeOut: 'Count me out',
+    statStarts: 'Starts',
+    statCloses: 'Closes',
+    statAway: 'Away',
+    statCosts: 'Costs',
+    gettingThere: 'Getting there',
+    openInMaps: 'Open in Maps',
     startsIn: (m: number) => (m < 60 ? `Starts in ${m} min` : `Starts in ${Math.round(m / 60)} hrs`),
   },
   invite: {
-    title: 'Bring people',
-    notePlaceholder: 'Add a note (optional)',
+    title: "Who's coming?",
+    sub: (what: string, day: string, time: string) => `${what} · ${day.toLowerCase()}, ${time}`,
+    notePlaceholder: 'Add a note — "meet at the pavilion?"',
     send: (n: number) => `Send to ${n} ${n === 1 ? 'friend' : 'friends'}`,
     sendNamed: (name: string) => `Invite ${name}`,
-    sentTitle: (name: string) => `Sent to ${name}.`,
-    sentSub: "It's waiting at the top of their Plans. You'll know the second they say yes.",
-    backToPlans: 'Back to plans',
+    sentKicker: (time: string) => `Invite sent · ${time}`,
+    sentTitle: (n: number) =>
+      n === 1
+        ? "You're going, and so is one of them."
+        : `You're going, and so are ${NUMBER_WORDS[n] ?? n} of them.`,
+    // The nudge is the only notification this product ever sends, and the copy says
+    // so out loud. Do not soften 'nothing else from us' into a marketing promise.
+    sentBody: (names: string, nudgeAt: string) =>
+      `${names} ${names.includes(' and ') ? 'have' : 'has'} it. We'll nudge them at ${nudgeAt} — nothing else from us.`,
+    done: 'Done',
   },
   inviteReceived: {
     // Rendered on the SECOND phone and held up to a room. Read from three metres.
@@ -107,6 +194,12 @@ export const COPY = {
     emptyCta: "See what's on tonight",
     alone: 'going alone, which is fine',
     yours: 'Already yours',
+  },
+  saved: {
+    title: 'Saved',
+    openLabel: 'Saved places',
+    emptyTitle: 'Nothing saved yet.',
+    emptySub: 'Say yes to something on the deck and it lands here.',
   },
   passport: {
     stats: ['Visits', 'With friends', 'Cities'] as const,

@@ -37,3 +37,26 @@ export function fallbackPersona(places: Place[], interests: Tag[]): PersonaResul
     fallback: true,
   }
 }
+
+/**
+ * Bounce it — the anti-recommendation. One place whose tags overlap NOTHING you
+ * said you were into. Random within that set, and it will not repeat until the
+ * whole cold set has been shown once.
+ */
+export function pickBounce(
+  places: Place[],
+  interests: Tag[],
+  exclude: string[],
+): Place | null {
+  const cold = places.filter((p) => !p.tags.some((t) => interests.includes(t)))
+  const fresh = cold.filter((p) => !exclude.includes(p.id))
+  const pool = fresh.length > 0 ? fresh : cold
+  if (pool.length === 0) return null
+  return pool[Math.floor(Math.random() * pool.length)]
+}
+
+/** Why this one is outside your usual. Names one of ITS tags you never picked. */
+export function bounceReason(place: Place, interests: Tag[]): string | null {
+  const unpicked = place.tags.find((t) => !interests.includes(t))
+  return unpicked ? unpicked.replace('-', ' ') : null
+}

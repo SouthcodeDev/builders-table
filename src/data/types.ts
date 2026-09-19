@@ -155,7 +155,11 @@ export type Passport = {
   nextStamp: { title: string; when: string } | null
 }
 
-export type Mode = 'judge' | 'active'
+/**
+ * 'active'   — the consumer door (Apple/Google). Onboards, then the full app.
+ * 'business' — the "I'm a Business" door. Tiger's Milk, dashboard only.
+ */
+export type Mode = 'active' | 'business'
 
 /** Social proof for one place: friend avatars (active mode) plus a head-count base. */
 export type Attendance = { base: number; friends: Person[] }

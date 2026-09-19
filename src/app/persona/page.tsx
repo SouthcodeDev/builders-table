@@ -10,7 +10,7 @@ export default function PersonaPage() {
   const { ready, mode, interests, personaLoading, persona, requestPersona } = usePlaces();
 
   useEffect(() => {
-    if (ready && mode === "judge" && !persona && !personaLoading) {
+    if (ready && mode && !persona && !personaLoading) {
       void requestPersona();
     }
   }, [ready, mode, persona, personaLoading, requestPersona]);

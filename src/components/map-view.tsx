@@ -14,12 +14,14 @@ export default function MapView({
   selectedId = null,
   onSelectPin,
   height,
+  brandIds,
 }: {
   city: City;
   places: Place[];
   selectedId?: string | null;
   onSelectPin?: (placeId: string | null) => void;
   height?: number;
+  brandIds?: string[];
 }) {
   return (
     <MapCanvas
@@ -28,6 +30,7 @@ export default function MapView({
       selectedId={selectedId}
       onSelectPin={onSelectPin}
       height={height}
+      brandIds={brandIds}
     />
   );
 }

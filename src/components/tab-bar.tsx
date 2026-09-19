@@ -31,7 +31,7 @@ export function TabBar() {
                 href={href}
                 aria-current={active ? "page" : undefined}
                 className={`flex flex-col items-center gap-1.5 pt-2 ${
-                  active ? "text-hero" : "text-muted"
+                  active ? "text-pop" : "text-muted"
                 }`}
               >
                 <Icon size={20} strokeWidth={active ? 2.25 : 1.75} aria-hidden />

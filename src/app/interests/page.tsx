@@ -66,7 +66,7 @@ export default function InterestsPage() {
         <button
           onClick={carryOn}
           disabled={!canCarryOn || sending}
-          className="button flex h-[54px] w-full items-center justify-center bg-pop text-base font-medium text-white shadow-[0_12px_24px_-14px_rgba(42,0,133,0.7)] disabled:opacity-90"
+          className="button flex h-[54px] w-full items-center justify-center bg-pop text-base font-medium text-white disabled:opacity-90"
         >
           {canCarryOn ? COPY.interests.ctaReady : COPY.interests.ctaLocked}
         </button>

@@ -13,6 +13,8 @@ type Props = {
   selectedId?: string | null;
   onSelectPin?: (placeId: string | null) => void;
   height?: number;
+  /** Events the business created live — drawn in pop orange, not hero purple. */
+  brandIds?: string[];
 };
 
 const FALLBACK_STYLE = "mapbox://styles/mapbox/streets-v12";
@@ -28,6 +30,7 @@ export default function MapCanvas({
   selectedId = null,
   onSelectPin,
   height,
+  brandIds,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -117,8 +120,11 @@ export default function MapCanvas({
       const el = document.createElement("button");
       el.type = "button";
       el.setAttribute("aria-label", p.title);
+      const brand = brandIds?.includes(p.id);
       el.style.cssText =
-        "width:26px;height:26px;border-radius:999px;background:#5100FF;border:3px solid #fff;box-shadow:0 8px 16px -8px rgba(10,10,10,0.5);cursor:pointer;padding:0;transition:all 150ms ease";
+        `width:26px;height:26px;border-radius:999px;background:${
+          brand ? "#FF4A00" : "#5100FF"
+        };border:3px solid #fff;box-shadow:0 8px 16px -8px rgba(10,10,10,0.5);cursor:pointer;padding:0;transition:width 150ms ease,height 150ms ease,opacity 150ms ease`;
       el.addEventListener("click", (e) => {
         e.stopPropagation();
         onSelectRef.current?.(p.id);
@@ -130,8 +136,10 @@ export default function MapCanvas({
     });
 
     applySelection();
-    fitToPlaces();
-  }, [places, token, applySelection, fitToPlaces]);
+    // Never re-frame over a live selection — the bounce flies to its pin and a
+    // refit here would yank the camera back out to the whole set.
+    if (!selectedRef.current) fitToPlaces();
+  }, [places, token, applySelection, fitToPlaces, brandIds]);
 
   /**
    * Drop (or move) the user-location dot. fly=true is the explicit button — it also
