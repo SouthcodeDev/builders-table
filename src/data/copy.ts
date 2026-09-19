@@ -225,7 +225,6 @@ export const COPY = {
     searchPlaceholder: 'Search a suburb or city',
     useMyLocation: 'Use my location',
     useMyLocationSub: 'Cape Town',
-    cityHeading: 'Country',
     nearbyHeading: 'Nearby areas',
     areaMeta: (on: number, km: number) => `${on} on · ${km} km`,
     radiusHeading: 'Radius',
