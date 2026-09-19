@@ -358,9 +358,9 @@ export default function MapCanvas({
         type="button"
         onClick={() => locateUser(true)}
         aria-label="Show my location"
-        className="absolute right-3 top-[124px] z-10 grid h-11 w-11 place-items-center rounded-xl bg-surface shadow-[0_6px_16px_-6px_rgba(10,10,10,0.4)]"
+        className="absolute right-3 top-40 z-10 grid h-11 w-11 place-items-center rounded-xl bg-surface shadow-[0_6px_16px_-6px_rgba(10,10,10,0.4)]"
       >
-        <LocateFixed size={18} strokeWidth={2} className="text-accent" aria-hidden />
+        <LocateFixed size={18} strokeWidth={2} className="text-pop" aria-hidden />
       </button>
       )}
     </div>

@@ -24,8 +24,8 @@ export default function SignInPage() {
   return (
     <main className="flex min-h-dvh flex-1 flex-col bg-surface">
       <div
-        className="photo h-[380px] w-full shrink-0 rounded-bl-[320px] rounded-br-[220px] rounded-tl-[32px] rounded-tr-[320px] -ml-24"
-        style={{ backgroundImage: "url(/images/hero-signin.jpg)" }}
+        className="photo h-[460px] w-full shrink-0 rounded-bl-[320px] rounded-br-[220px] rounded-tl-[32px] rounded-tr-[320px] -ml-24"
+        style={{ backgroundImage: "url(/images/singin-new.webp)" }}
       />
       <div className="flex flex-1 justify-between flex-col px-6 pt-6 pb-safe">
         <div className="flex flex-col flex-1 items-start justify-center gap-2">

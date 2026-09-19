@@ -204,3 +204,26 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
+
+/* Splash shapes breathe — a subtle eased scale loop on the two hero circles.
+   Stagger is applied per-element with an [animation-delay:-Xs] arbitrary utility
+   (utilities layer wins over this shorthand), so both pairs are already mid-phase
+   on the first frame and the top-right / bottom-left groups drift apart. */
+@keyframes shape-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.125);
+  }
+}
+.shape-breathe {
+  animation: shape-breathe 2.5s ease-in-out infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .shape-breathe {
+    animation: none;
+  }
+}

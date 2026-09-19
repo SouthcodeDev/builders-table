@@ -82,7 +82,7 @@ export default function DiscoverPage() {
 
   return (
     <main className="flex min-h-dvh flex-1 flex-col bg-surface">
-      <div className="relative flex flex-1 flex-col pt-safe">
+      <div className="relative flex flex-1 flex-col pt-4">
           {/* Header — the greeting collapses on map; the switcher rises into its place. */}
           <div className="relative z-10">
             <AnimatePresence initial={false}>
