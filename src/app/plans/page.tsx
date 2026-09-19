@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { CalendarDays } from "lucide-react";
+import { Bookmark, CalendarDays } from "lucide-react";
 import { COPY, personById, placeById } from "@/data/seed";
 import { InviteReceivedCard } from "@/components/invite-received-card";
 import { PlanRow } from "@/components/plan-row";
@@ -42,10 +42,10 @@ export default function PlansPage() {
     return <main className="min-h-dvh flex-1 bg-canvas" />;
   }
 
-  const byNewest = (a: (typeof plans)[number], b: (typeof plans)[number]) =>
-    b.createdAtMs - a.createdAtMs;
-  const ordered = plans.filter((p) => p.status === "going").sort(byNewest);
-  const savedOrdered = plans.filter((p) => p.status === "saved").sort(byNewest);
+  // Saved lives behind the bookmark in the header — this page is only real plans.
+  const ordered = plans
+    .filter((p) => p.status === "going")
+    .sort((a, b) => b.createdAtMs - a.createdAtMs);
 
   const row = (plan: (typeof plans)[number]) => {
     const place = placeById(plan.placeId);
@@ -69,12 +69,21 @@ export default function PlansPage() {
   return (
     <main className="flex min-h-dvh flex-1 flex-col bg-surface">
       <div className="flex flex-1 flex-col pt-safe">
-        <button
-          onClick={onHeaderTap}
-          className="px-5 pt-[20px] text-left text-[26px] font-medium tracking-[-0.02em]"
-        >
-          {COPY.plans.title}
-        </button>
+        <div className="flex items-center justify-between px-5 pt-[20px]">
+          <button
+            onClick={onHeaderTap}
+            className="text-left text-[26px] font-medium tracking-[-0.02em]"
+          >
+            {COPY.plans.title}
+          </button>
+          <button
+            onClick={() => router.push("/saved")}
+            aria-label={COPY.saved.openLabel}
+            className="-mr-1.5 grid h-10 w-10 place-items-center rounded-full"
+          >
+            <Bookmark size={21} strokeWidth={2} className="text-pop" aria-hidden />
+          </button>
+        </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-5 pb-4 pt-4">
           {pendingInvite && (
@@ -88,7 +97,7 @@ export default function PlansPage() {
             />
           )}
 
-          {ordered.length === 0 && savedOrdered.length === 0 && !pendingInvite ? (
+          {ordered.length === 0 && !pendingInvite ? (
             <div className="flex flex-1 flex-col items-center justify-center gap-4 px-5 text-center">
               <span className="grid h-16 w-16 place-items-center rounded-full bg-canvas-soft">
                 <CalendarDays size={24} strokeWidth={1.75} className="text-muted" aria-hidden />
@@ -101,15 +110,7 @@ export default function PlansPage() {
               </p>
             </div>
           ) : (
-            <>
-              {ordered.map(row)}
-              {savedOrdered.length > 0 && (
-                <>
-                  <div className="kicker shrink-0 pt-2">{COPY.plans.savedHeading}</div>
-                  {savedOrdered.map(row)}
-                </>
-              )}
-            </>
+            ordered.map(row)
           )}
         </div>
       </div>

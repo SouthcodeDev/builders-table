@@ -36,13 +36,16 @@ import {
   type Plan,
   type InterestTag,
 } from "@/data/seed";
+import {
+  BUSINESS, EMPTY_DRAFT, draftToPlace, registerPlaces, type EventDraft,
+} from "@/data/seed";
 import { fallbackPersona as buildFallback, localReason, rankLocally } from "@/data/rank";
 import { distanceKm } from "@/data/geo";
 import { minutesUntil } from "@/data/schedule";
 import { supabaseInvites } from "@/lib/supabase";
 
 type DeviceUser = { id: string; name: string; initials: string };
-type DeckVerdict = "yes" | "saved" | "pass";
+type DeckVerdict = "yes" | "pass";
 
 type PlacesContextValue = {
   ready: boolean;
@@ -81,6 +84,11 @@ type PlacesContextValue = {
   setArea: (area: string | null) => void;
   setRadiusKm: (km: number | null) => void;
   markDeck: (placeId: string, verdict: DeckVerdict) => void;
+  /** Events this business created live, in this app. Real Places (§1.5, localStorage). */
+  myEvents: Place[];
+  draft: EventDraft;
+  setDraft: (d: EventDraft) => void;
+  publishDraft: () => Place;
 };
 
 const PlacesContext = createContext<PlacesContextValue | null>(null);
@@ -115,6 +123,8 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [deckPicks, setDeckPicks] = useState<Record<string, DeckVerdict>>({});
+  const [myEvents, setMyEvents] = useState<Place[]>([]);
+  const [draft, setDraftState] = useState<EventDraft>(EMPTY_DRAFT);
 
   const userRef = useRef(user);
   useEffect(() => {
@@ -133,7 +143,7 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
       }
       const storedMode = read<Mode>(STORAGE.mode);
       const storedUser = read<DeviceUser>(STORAGE.user);
-      if (storedMode === "judge" || storedMode === "active") setMode(storedMode);
+      if (storedMode === "business" || storedMode === "active") setMode(storedMode);
       if (device && storedMode === "active") {
         setUser(device);
         const seeded = AMEER_PLANS.map((p, i) => ({
@@ -162,6 +172,14 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
       if (storedInvites) setInvites(storedInvites);
       const storedPicks = read<Record<string, DeckVerdict>>(STORAGE.deckPicks);
       if (storedPicks) setDeckPicks(storedPicks);
+      const storedMine = read<Place[]>(STORAGE.myEvents);
+      if (storedMine) {
+        setMyEvents(storedMine);
+        // Before setReady, so the first rendered frame can already resolve them.
+        registerPlaces(storedMine);
+      }
+      const storedDraft = read<EventDraft>(STORAGE.draft);
+      if (storedDraft) setDraftState(storedDraft);
       setReady(true);
     });
   }, []);
@@ -170,26 +188,19 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     setMode(m);
     persist(STORAGE.mode, m);
     const device = read<DeviceUser>(STORAGE.device);
-    if (m === "judge") {
-      const u: DeviceUser = { id: "judge", name: "Judge", initials: "J" };
+    if (m === "business") {
+      // No onboarding, no persona, no plans — a business only ever sees its own shelf.
+      const u: DeviceUser = {
+        id: BUSINESS.id,
+        name: BUSINESS.name,
+        initials: BUSINESS.initials,
+      };
       setUser(u);
       persist(STORAGE.user, u);
-      setPlans([]);
-      persist(STORAGE.plans, []);
-      setInvites([]);
-      persist(STORAGE.invites, []);
-      setInterestsState([]);
-      persist(STORAGE.interests, []);
-      setPersona(null);
-      persist(STORAGE.persona, null);
-      setDeckPicks({});
-      persist(STORAGE.deckPicks, {});
       setCityState("cape-town");
       persist(STORAGE.city, "cape-town");
-      setAreaState(null);
-      persist(STORAGE.area, null);
-      setRadiusState(10);
-      persist(STORAGE.radius, 10);
+      setDraftState(EMPTY_DRAFT);
+      persist(STORAGE.draft, EMPTY_DRAFT);
     } else {
       const u: DeviceUser = device ?? {
         id: ME_ACTIVE.id,
@@ -203,8 +214,13 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
         : activePlans();
       setPlans(seeded);
       persist(STORAGE.plans, seeded);
+      // Onboarding runs for this door too — start it empty every time.
       setPersona(null);
       persist(STORAGE.persona, null);
+      setInterestsState([]);
+      persist(STORAGE.interests, []);
+      setDeckPicks({});
+      persist(STORAGE.deckPicks, {});
     }
   }, []);
 
@@ -377,6 +393,26 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const setDraft = useCallback((d: EventDraft) => {
+    setDraftState(d);
+    persist(STORAGE.draft, d);
+  }, []);
+
+  /**
+   * The draft becomes a real Place. It joins the registry so every existing
+   * placeById() call site resolves it, and the consumer feed and map pick it up.
+   */
+  const publishDraft = useCallback((): Place => {
+    const place = draftToPlace(draft, `tm-${Date.now()}`);
+    const next = [...myEvents.filter((p) => p.id !== place.id), place];
+    setMyEvents(next);
+    registerPlaces(next);
+    persist(STORAGE.myEvents, next);
+    setDraftState(EMPTY_DRAFT);
+    persist(STORAGE.draft, EMPTY_DRAFT);
+    return place;
+  }, [draft, myEvents]);
+
   const friends = mode === "active" ? FRIENDS : [];
 
   // ponytail: going and saved are one row, so a place is either/or — bookmarking a
@@ -407,9 +443,9 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     [city],
   );
 
-  const rankedForMode = useMemo(() => {
-    const list = placesIn(city);
-    if (mode === "judge" && persona) {
+  const ranked = useMemo(() => {
+    const list = [...placesIn(city), ...myEvents.filter((p) => p.city === city)];
+    if (persona) {
       const order = persona.ranked.map((r) => r.eventId);
       return [...list].sort((a, b) => {
         const ia = order.indexOf(a.id);
@@ -417,30 +453,38 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
         return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
       });
     }
-    return rankLocally(list, mode === "active" ? ACTIVE_PERSONA.tags : interests);
-  }, [mode, persona, city, interests]);
+    // No persona yet (onboarding skipped, or a cold reload mid-flow).
+    return rankLocally(list, interests.length > 0 ? interests : ACTIVE_PERSONA.tags);
+  }, [persona, city, interests, myEvents]);
 
   const events = useMemo(() => {
-    let list = rankedForMode;
+    let list = ranked;
     if (area) list = list.filter((p) => p.area === area);
-    if (radiusKm != null) list = list.filter((p) => distanceKm(CITIES[city].center, p) <= radiusKm);
+    if (radiusKm != null) {
+      // Events put on inside the app are exempt from the radius. The business that
+      // created one has to be able to see it land, and Muizenberg is 20 km from the
+      // default centre — it would otherwise be filtered out of its own demo.
+      const mine = new Set(myEvents.map((p) => p.id));
+      list = list.filter(
+        (p) => mine.has(p.id) || distanceKm(CITIES[city].center, p) <= radiusKm,
+      );
+    }
     return list;
-  }, [rankedForMode, area, radiusKm, city]);
+  }, [ranked, area, radiusKm, city, myEvents]);
 
-  const deckEvents = useMemo(() => rankedForMode.filter((p) => p.kind === "event").slice(0, 6), [rankedForMode]);
+  const deckEvents = useMemo(() => ranked.filter((p) => p.kind === "event").slice(0, 6), [ranked]);
 
   const reasonFor = useCallback(
     (placeId: string) => {
+      const live = persona?.ranked.find((r) => r.eventId === placeId);
+      if (live) return live.reason;
+      const place = placeById(placeId);
+      if (!place) return "On tonight.";
       if (mode === "active") {
         const pre = ACTIVE_RANKED.find((r) => r.eventId === placeId);
         if (pre) return pre.reason;
-        const place = placeById(placeId);
-        return place ? localReason(place, ACTIVE_PERSONA.tags) : "On tonight.";
       }
-      const hit = persona?.ranked.find((r) => r.eventId === placeId);
-      if (hit) return hit.reason;
-      const place = placeById(placeId);
-      return place ? localReason(place, interests) : "On tonight.";
+      return localReason(place, interests.length > 0 ? interests : ACTIVE_PERSONA.tags);
     },
     [mode, persona, interests],
   );
@@ -492,6 +536,10 @@ export function PlacesProvider({ children }: { children: React.ReactNode }) {
     setArea,
     setRadiusKm,
     markDeck,
+    myEvents,
+    draft,
+    setDraft,
+    publishDraft,
   };
 
   return <PlacesContext.Provider value={value}>{children}</PlacesContext.Provider>;

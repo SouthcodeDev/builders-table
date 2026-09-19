@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas" />
+<style>
+  @font-face { font-family: 'PP Watch'; src: url('uploads/PPWatch-Black.otf') format('opentype'); font-weight: 900; font-style: normal; }
+  @font-face { font-family: 'PP Watch'; src: url('uploads/PPWatch-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; }
+  @font-face { font-family: 'PP Watch'; src: url('uploads/PPWatch-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; }
+  @font-face { font-family: 'FT Polar'; src: url('uploads/FTPolar-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; }
+  @font-face { font-family: 'FT Polar'; src: url('uploads/FTPolar-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; }
+  body { margin: 0; background: #EFEDF5; -webkit-font-smoothing: antialiased; }
+  a { color: #5100FF; text-decoration: none; }
+  a:hover { color: #0A0A0A; }
+  .ph { background-size: cover; background-position: center; }
+</style>
+</helmet>
+
+<div style="font-family: 'FT Polar', system-ui, sans-serif; color: #0A0A0A; background: #EFEDF5; padding: 56px 48px 140px; display: flex; flex-direction: column; gap: 60px;">
+
+  <div style="display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(10,10,10,0.12); padding-bottom: 26px;">
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <img src="uploads/placeslogo.png" style="width: 34px; height: 28px; object-fit: contain;" />
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(10,10,10,0.5);">Phase 4 · Screens · handoff set</div>
+        <div style="font-weight: 500; font-size: 36px; line-height: 1; letter-spacing: -0.02em;">bounce — the walkthrough</div>
+      </div>
+    </div>
+    <div style="font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: rgba(10,10,10,0.5); line-height: 1.7; text-align: right;">390 × 844 · PWA, no browser chrome<br />FT Polar (heading + body) · PP Watch (wordmark) · hero #5100FF · pop #FF4A00</div>
+  </div>
+
+  <div style="display: flex; gap: 10px; align-items: center; padding: 14px 18px; border-radius: 16px; background: #FFFFFF; border: 1px solid rgba(10,10,10,0.08); max-width: 720px;">
+    <div style="width: 8px; height: 8px; border-radius: 999px; background: #5100FF; flex-shrink: 0;"></div>
+    <div style="font-size: 13px; line-height: 1.6; color: rgba(10,10,10,0.65);">Static handoff set for the build agent — every screen below, sequenced in demo order. Paired screens marked <b>JUDGE</b> / <b>ACTIVE</b> are the same component in its two data states; everything else renders once because it doesn't change between modes.</div>
+  </div>
+
+  <!-- ============ 09 BOUNCE IT ============ -->
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: baseline; gap: 14px;">
+      <div style="font-weight: 500; font-size: 20px; letter-spacing: -0.02em;">09 — Bounce it</div>
+      <div style="font-size: 13px; color: rgba(10,10,10,0.5);">Anti-recommendation — throw the set back</div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start;">
+
+      <div data-screen-label="24 Bounce control" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(10,10,10,0.45);">24 · Bounce it — feed + map</div>
+        <div style="width: 390px; height: 844px; border-radius: 42px; overflow: hidden; position: relative; background: #E4EAF4; box-shadow: 0 2px 4px rgba(10,10,10,0.08), 0 40px 70px -40px rgba(81,0,255,0.35);">
+          <div style="position: absolute; inset: 0; background: #E4EAF4;"></div>
+          <div style="position: absolute; left: -40px; top: 160px; width: 300px; height: 300px; border-radius: 999px; background: #D3DEEE;"></div>
+          <div style="position: absolute; right: -80px; top: 420px; width: 340px; height: 420px; background: #CFDCEE; border-radius: 40% 60% 55% 45%;"></div>
+          <div style="position: absolute; inset: 0; padding: 60px 16px 0; display: flex; flex-direction: column;">
+            <div style="margin-top: 16px; display: flex; gap: 4px; padding: 4px; background: rgba(255,255,255,0.9); border-radius: 999px; box-shadow: 0 2px 8px rgba(10,10,10,0.1);">
+              <div style="flex: 1; text-align: center; padding: 9px 0; border-radius: 999px; font-weight: 500; font-size: 13px; color: #6E6E76;">Feed</div>
+              <div style="flex: 1; text-align: center; padding: 9px 0; border-radius: 999px; background: #0A0A0A; color: #FFFFFF; font-weight: 500; font-size: 13px;">Map</div>
+            </div>
+            <div style="position: relative; flex: 1; min-height: 0; margin-top: 12px;">
+              <div style="position: absolute; left: 24px; top: 50px; padding: 8px 12px; border-radius: 999px; background: #5100FF; color: #FFFFFF; font-size: 13px; font-weight: 500; box-shadow: 0 8px 18px -8px rgba(81,0,255,0.8);">4 in Sea Point</div>
+              <div style="position: absolute; left: 186px; top: 146px; padding: 8px 12px; border-radius: 999px; background: #3552E0; color: #FFFFFF; font-size: 13px; font-weight: 500; box-shadow: 0 8px 18px -8px rgba(53,82,224,0.7);">3 in Woodstock</div>
+              <div style="position: absolute; left: 70px; top: 290px; width: 40px; height: 40px; border-radius: 999px; background: #FFFFFF; border: 2.5px solid #5100FF; display: grid; place-items: center; box-shadow: 0 8px 16px -8px rgba(10,10,10,0.5);"><div style="width: 12px; height: 12px; border-radius: 3px; background: #5100FF;"></div></div>
+              <div style="position: absolute; left: 244px; top: 362px; width: 40px; height: 40px; border-radius: 999px; background: #FFFFFF; border: 2.5px solid #0E6E77; display: grid; place-items: center; box-shadow: 0 8px 16px -8px rgba(10,10,10,0.5);"><div style="width: 12px; height: 12px; border-radius: 999px; background: #0E6E77;"></div></div>
+              <div style="position: absolute; right: 0; bottom: 150px; width: 44px; height: 44px; border-radius: 14px; background: #FFFFFF; display: grid; place-items: center; box-shadow: 0 6px 16px -6px rgba(10,10,10,0.4);"><div style="width: 14px; height: 14px; border-radius: 999px; border: 2.5px solid #3552E0;"></div></div>
+              <div style="position: absolute; left: 0; right: 0; bottom: 8px; display: flex; justify-content: center;">
+                <div style="height: 52px; padding: 0 22px; border-radius: 999px; background: #FF4A00; color: #FFFFFF; display: flex; align-items: center; gap: 12px; box-shadow: 0 18px 34px -16px rgba(255,74,0,0.85);">
+                  <div style="width: 22px; height: 18px; position: relative;"><div style="position: absolute; left: 0; top: 0; width: 7px; height: 8px; border-radius: 999px; background: #FFFFFF; transform: rotate(-16deg);"></div><div style="position: absolute; left: 8px; top: 9px; width: 7px; height: 8px; border-radius: 999px; background: rgba(255,255,255,0.6); transform: rotate(-16deg);"></div><div style="position: absolute; left: 15px; top: 1px; width: 7px; height: 8px; border-radius: 999px; background: #FFFFFF; transform: rotate(-16deg);"></div></div>
+                  <span style="font-weight: 500; font-size: 15px;">Bounce this lot</span>
+                </div>
+              </div>
+            </div>
+            <div style="padding: 10px 16px 26px; display: flex; justify-content: space-around; align-items: flex-start; background: rgba(255,255,255,0.95); border-top: 1px solid rgba(10,10,10,0.07);"><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px;"><div style="width: 20px; height: 20px; border-radius: 6px; background: #5100FF;"></div><span style="font-size: 10px; font-weight: 500; color: #5100FF;">Discover</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px;"><div style="width: 20px; height: 20px; border-radius: 6px; background: rgba(10,10,10,0.16);"></div><span style="font-size: 10px; font-weight: 500; color: #6E6E76;">Plans</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px;"><div style="width: 20px; height: 20px; border-radius: 999px; background: rgba(10,10,10,0.16);"></div><span style="font-size: 10px; font-weight: 500; color: #6E6E76;">Profile</span></div></div>
+          </div></div>
+      </div>
+      <div style="width: 390px; font-size: 12px; color: rgba(10,10,10,0.5); line-height: 1.5;">Anti-recommendation. One tap throws the whole current set back and rebounds a fresh one — the same control sits above the nav on the feed. Long-press skips straight to the reason sheet.</div>
+      <div data-screen-label="25 Bounce reasons" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(10,10,10,0.45);">25 · Bounce it — what missed</div>
+        <div style="width: 390px; height: 844px; border-radius: 42px; overflow: hidden; position: relative; background: #E4EAF4; box-shadow: 0 2px 4px rgba(10,10,10,0.08), 0 40px 70px -40px rgba(81,0,255,0.35);">
+          <div style="position: absolute; inset: 0; background: #E4EAF4;"></div>
+          <div style="position: absolute; left: -40px; top: 160px; width: 300px; height: 300px; border-radius: 999px; background: #D3DEEE;"></div>
+          <div style="position: absolute; inset: 0; background: rgba(10,10,10,0.42);"></div>
+          <div style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-radius: 28px 28px 0 0; padding: 12px 20px 30px;">
+            <div style="width: 42px; height: 4px; border-radius: 999px; background: rgba(10,10,10,0.16); margin: 0 auto 20px;"></div>
+            <div style="font-weight: 500; font-size: 24px; letter-spacing: -0.02em;">Bounced.</div>
+            <div style="font-size: 15px; line-height: 1.5; color: rgba(10,10,10,0.62); margin-top: 6px; max-width: 300px;">Nine new things loading. Tell us what missed and tonight gets sharper — skip if you'd rather not.</div>
+            <div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px;">
+              <div style="padding: 11px 16px; border-radius: 999px; background: #5100FF; color: #FFFFFF; font-size: 14px; font-weight: 500;">Too far</div>
+              <div style="padding: 11px 16px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.14); font-size: 14px; font-weight: 500;">Too late</div>
+              <div style="padding: 11px 16px; border-radius: 999px; background: #5100FF; color: #FFFFFF; font-size: 14px; font-weight: 500;">Not my thing</div>
+              <div style="padding: 11px 16px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.14); font-size: 14px; font-weight: 500;">Seen it already</div>
+              <div style="padding: 11px 16px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.14); font-size: 14px; font-weight: 500;">Too much of a crowd</div>
+              <div style="padding: 11px 16px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.14); font-size: 14px; font-weight: 500;">Costs too much</div>
+            </div>
+            <div style="margin-top: 22px; border-radius: 16px; background: #F5F4FA; padding: 16px;">
+              <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6E76;">What it does to your feed</div>
+              <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 13px; width: 96px; flex-shrink: 0;">Within 3 km</span><div style="flex: 1; height: 8px; border-radius: 999px; background: #EFEDF5; overflow: hidden;"><div style="width: 82%; height: 100%; background: #FF4A00; border-radius: 999px;"></div></div></div>
+                <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 13px; width: 96px; flex-shrink: 0;">Running</span><div style="flex: 1; height: 8px; border-radius: 999px; background: #EFEDF5; overflow: hidden;"><div style="width: 64%; height: 100%; background: #5100FF; border-radius: 999px;"></div></div></div>
+                <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 13px; width: 96px; flex-shrink: 0;">Club nights</span><div style="flex: 1; height: 8px; border-radius: 999px; background: #EFEDF5; overflow: hidden;"><div style="width: 8%; height: 100%; background: rgba(10,10,10,0.25); border-radius: 999px;"></div></div></div>
+              </div>
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+              <div style="flex: 1; height: 54px; border-radius: 999px; background: #FF4A00; color: #FFFFFF; display: grid; place-items: center; font-weight: 500; font-size: 16px;">Rebound</div>
+              <div style="width: 110px; height: 54px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.16); display: grid; place-items: center; font-weight: 500; font-size: 15px;">Skip</div>
+            </div>
+          </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 11 RICOCHETS ============ -->
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: baseline; gap: 14px;">
+      <div style="font-weight: 500; font-size: 20px; letter-spacing: -0.02em;">11 — Ricochets</div>
+      <div style="font-size: 13px; color: rgba(10,10,10,0.5);">Shared itineraries — a day or a trip, chained</div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start;">
+
+      <div data-screen-label="28 Ricochets" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(10,10,10,0.45);">28 · Ricochets — shared day plans</div>
+        <div style="width: 390px; height: 844px; border-radius: 42px; overflow: hidden; position: relative; background: #FFFFFF; box-shadow: 0 2px 4px rgba(10,10,10,0.08), 0 40px 70px -40px rgba(81,0,255,0.35);">
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column;">
+            <div style="padding: 60px 20px 0;">
+              <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #6E6E76;">Someone already worked it out</div>
+              <div style="font-weight: 500; font-size: 28px; letter-spacing: -0.02em; margin-top: 8px; line-height: 1.1;">Ricochets</div>
+              <div style="font-size: 14px; line-height: 1.5; color: rgba(10,10,10,0.6); margin-top: 6px; max-width: 300px;">A day, chained. Three or four stops in an order that actually works.</div>
+              <div style="margin-top: 16px; display: flex; gap: 4px; padding: 4px; background: #EFEDF5; border-radius: 999px;">
+                <div style="flex: 1; text-align: center; padding: 8px 0; border-radius: 999px; background: #FFFFFF; font-weight: 500; font-size: 13px; box-shadow: 0 1px 3px rgba(10,10,10,0.12);">Near you</div>
+                <div style="flex: 1; text-align: center; padding: 8px 0; border-radius: 999px; font-weight: 500; font-size: 13px; color: #6E6E76;">Trips</div>
+                <div style="flex: 1; text-align: center; padding: 8px 0; border-radius: 999px; font-weight: 500; font-size: 13px; color: #6E6E76;">Yours · 2</div>
+              </div>
+            </div>
+            <div style="flex: 1; min-height: 0; overflow: hidden; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 14px;">
+              <div class="ph" style="border-radius: 20px; position: relative; height: 186px; background-image: url('uploads/Cross_Vertical_2_Small.webp'); box-shadow: 0 1px 2px rgba(10,10,10,0.05), 0 16px 32px -26px rgba(81,0,255,0.4); flex-shrink: 0;">
+                <div style="position: absolute; inset: auto 0 0 0; height: 66%; background: linear-gradient(to top, rgba(8,7,14,0.9), rgba(8,7,14,0));"></div>
+                <div style="position: absolute; top: 12px; left: 12px; display: flex; gap: 6px;"><span style="padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.92); font-size: 10px; font-weight: 500;">ONE DAY</span><span style="padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.92); font-size: 10px; font-weight: 500;">EAT · SURF · EAT</span></div>
+                <div style="position: absolute; inset: auto 14px 14px 14px;"><div style="font-weight: 500; font-size: 20px; line-height: 1.1; letter-spacing: -0.015em; color: #FFFFFF;">The Muizenberg loop</div><div style="font-size: 12px; color: rgba(255,255,255,0.82); margin-top: 4px;">Nadia · 3 stops · 6 hrs · saved 214×</div></div>
+              </div>
+              <div class="ph" style="border-radius: 20px; position: relative; height: 140px; background-image: url('uploads/Cross_vertical_8_small.webp'); box-shadow: 0 1px 2px rgba(10,10,10,0.05), 0 16px 32px -26px rgba(81,0,255,0.4); flex-shrink: 0;">
+                <div style="position: absolute; inset: auto 0 0 0; height: 66%; background: linear-gradient(to top, rgba(8,7,14,0.9), rgba(8,7,14,0));"></div>
+                <div style="position: absolute; top: 12px; left: 12px; display: flex; gap: 6px;"><span style="padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.92); font-size: 10px; font-weight: 500;">TRIP</span></div>
+                <div style="position: absolute; inset: auto 14px 14px 14px;"><div style="font-weight: 500; font-size: 20px; line-height: 1.1; letter-spacing: -0.015em; color: #FFFFFF;">Two days in Lisbon</div><div style="font-size: 12px; color: rgba(255,255,255,0.82); margin-top: 4px;">Amy · 8 stops · saved 91×</div></div>
+              </div>
+              <div class="ph" style="border-radius: 20px; position: relative; height: 140px; background-image: url('uploads/Cross_vertical_11_small.webp'); box-shadow: 0 1px 2px rgba(10,10,10,0.05), 0 16px 32px -26px rgba(81,0,255,0.4); flex-shrink: 0;">
+                <div style="position: absolute; inset: auto 0 0 0; height: 66%; background: linear-gradient(to top, rgba(8,7,14,0.9), rgba(8,7,14,0));"></div>
+                <div style="position: absolute; top: 12px; left: 12px; display: flex; gap: 6px;"><span style="padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.92); font-size: 10px; font-weight: 500;">ONE DAY</span></div>
+                <div style="position: absolute; inset: auto 14px 14px 14px;"><div style="font-weight: 500; font-size: 20px; line-height: 1.1; letter-spacing: -0.015em; color: #FFFFFF;">Slow Saturday, Kalk Bay</div><div style="font-size: 12px; color: rgba(255,255,255,0.82); margin-top: 4px;">Thabo · 4 stops · saved 22×</div></div>
+              </div>
+            </div>
+            <div style="padding: 12px 20px; background: #FFFFFF;"><div style="height: 52px; border-radius: 999px; background: #FF4A00; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 16px 30px -18px rgba(255,74,0,0.7);"><span style="font-size: 19px; font-weight: 500;">+</span><span style="font-weight: 500; font-size: 15px;">Chain one of your own</span></div></div>
+            <div style="padding: 10px 16px 26px; display: flex; justify-content: space-around; align-items: flex-start; background: rgba(255,255,255,0.95); border-top: 1px solid rgba(10,10,10,0.07);"><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px;"><div style="width: 20px; height: 20px; border-radius: 6px; background: rgba(10,10,10,0.16);"></div><span style="font-size: 10px; font-weight: 500; color: #6E6E76;">Discover</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px;"><div style="width: 20px; height: 20px; border-radius: 6px; background: #5100FF;"></div><span style="font-size: 10px; font-weight: 500; color: #5100FF;">Plans</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px;"><div style="width: 20px; height: 20px; border-radius: 999px; background: rgba(10,10,10,0.16);"></div><span style="font-size: 10px; font-weight: 500; color: #6E6E76;">Profile</span></div></div>
+          </div></div>
+      </div>
+      <div data-screen-label="29 Ricochet detail" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(10,10,10,0.45);">29 · A ricochet — the chain</div>
+        <div style="width: 390px; height: 844px; border-radius: 42px; overflow: hidden; position: relative; background: #FFFFFF; box-shadow: 0 2px 4px rgba(10,10,10,0.08), 0 40px 70px -40px rgba(81,0,255,0.35);">
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column;">
+            <div class="ph" style="height: 240px; position: relative; background-image: url('uploads/Cross_Vertical_2_Small.webp'); flex-shrink: 0;">
+              <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,7,14,0.88), rgba(8,7,14,0.1));"></div>
+              <div style="position: absolute; top: 60px; left: 20px; width: 34px; height: 34px; border-radius: 999px; background: rgba(255,255,255,0.22); display: grid; place-items: center;"><div style="width: 9px; height: 9px; border-left: 2px solid #FFFFFF; border-bottom: 2px solid #FFFFFF; transform: rotate(45deg); margin-left: 3px;"></div></div>
+              <div style="position: absolute; inset: auto 20px 18px 20px; color: #FFFFFF;">
+                <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.8);">Ricochet · Muizenberg · 6 hrs</div>
+                <div style="font-weight: 500; font-size: 28px; letter-spacing: -0.02em; line-height: 1.05; margin-top: 6px;">The Muizenberg loop</div>
+                <div style="display: flex; align-items: center; gap: 9px; margin-top: 10px;"><div style="width: 24px; height: 24px; border-radius: 999px; background: #5100FF; display: grid; place-items: center; color: #FFFFFF; font-size: 8px; font-weight: 500; flex-shrink: 0; border: 2px solid #FFFFFF;">NM</div><span style="font-size: 12px; color: rgba(255,255,255,0.88);">Chained by Nadia · saved 214 times</span></div>
+              </div>
+            </div>
+            <div style="flex: 1; min-height: 0; overflow: hidden; padding: 22px 20px 20px; display: flex; flex-direction: column;">
+              <div style="display: flex; gap: 14px;">
+                <div style="display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0;">
+                  <div style="width: 28px; height: 28px; border-radius: 999px; background: #FF4A00; color: #FFFFFF; display: grid; place-items: center; font-size: 12px; font-weight: 500;">1</div>
+                  <div style="flex: 1; width: 2px; background: repeating-linear-gradient(to bottom, rgba(81,0,255,0.35) 0 4px, transparent 4px 8px); margin: 4px 0;"></div>
+                </div>
+                <div style="flex: 1; min-width: 0; padding-bottom: 18px;">
+                  <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; color: #6E6E76;">08:00 · START</div>
+                  <div style="display: flex; gap: 12px; margin-top: 6px;">
+                    <div style="flex: 1; min-width: 0;"><div style="font-weight: 500; font-size: 16px; letter-spacing: -0.01em;">Breakfast at Tiger&rsquo;s Milk</div><div style="font-size: 12px; color: #6E6E76; margin-top: 3px; line-height: 1.4;">Get the window table. Twenty minutes before the surf school fills up.</div></div>
+                    <div class="ph" style="width: 62px; height: 62px; border-radius: 14px; background-image: url('uploads/Cross_vertical_9_small.webp'); flex-shrink: 0;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 14px;">
+                <div style="display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0;">
+                  <div style="width: 28px; height: 28px; border-radius: 999px; background: #5100FF; color: #FFFFFF; display: grid; place-items: center; font-size: 12px; font-weight: 500;">2</div>
+                  <div style="flex: 1; width: 2px; background: repeating-linear-gradient(to bottom, rgba(81,0,255,0.35) 0 4px, transparent 4px 8px); margin: 4px 0;"></div>
+                </div>
+                <div style="flex: 1; min-width: 0; padding-bottom: 18px;">
+                  <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; color: #6E6E76;">09:30 · 4 MIN WALK</div>
+                  <div style="display: flex; gap: 12px; margin-top: 6px;">
+                    <div style="flex: 1; min-width: 0;"><div style="font-weight: 500; font-size: 16px; letter-spacing: -0.01em;">Surf lesson, Surfers Corner</div><div style="font-size: 12px; color: #6E6E76; margin-top: 3px; line-height: 1.4;">Boards from the shop on the corner. Beginner break, two hours.</div></div>
+                    <div class="ph" style="width: 62px; height: 62px; border-radius: 14px; background-image: url('uploads/Cross_Vertical_6_small.webp'); flex-shrink: 0;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 14px;">
+                <div style="display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0;">
+                  <div style="width: 28px; height: 28px; border-radius: 999px; background: #5100FF; color: #FFFFFF; display: grid; place-items: center; font-size: 12px; font-weight: 500;">3</div>
+                  
+                </div>
+                <div style="flex: 1; min-width: 0; padding-bottom: 0;">
+                  <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; color: #6E6E76;">13:00 · 6 MIN DRIVE</div>
+                  <div style="display: flex; gap: 12px; margin-top: 6px;">
+                    <div style="flex: 1; min-width: 0;"><div style="font-weight: 500; font-size: 16px; letter-spacing: -0.01em;">Lunch at Live Bait</div><div style="font-size: 12px; color: #6E6E76; margin-top: 3px; line-height: 1.4;">Book ahead on weekends. Sit outside, order the linefish.</div></div>
+                    <div class="ph" style="width: 62px; height: 62px; border-radius: 14px; background-image: url('uploads/Cross_vertical_8_small.webp'); flex-shrink: 0;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="flex: 1; min-height: 120px; margin-top: 20px; border-radius: 18px; background: #E4EAF4; position: relative; overflow: hidden;">
+                <div style="position: absolute; left: -30px; top: 30px; width: 200px; height: 200px; border-radius: 999px; background: #D3DEEE;"></div>
+                <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 44%; background: #BDD4F5; opacity: 0.55;"></div>
+                <div style="position: absolute; left: 66px; top: 52px; width: 104px; height: 2px; background: repeating-linear-gradient(to right, rgba(81,0,255,0.5) 0 5px, transparent 5px 10px); transform: rotate(22deg); transform-origin: left center;"></div>
+                <div style="position: absolute; left: 180px; top: 96px; width: 104px; height: 2px; background: repeating-linear-gradient(to right, rgba(81,0,255,0.5) 0 5px, transparent 5px 10px); transform: rotate(-20deg); transform-origin: left center;"></div>
+                <div style="position: absolute; left: 44px; top: 40px; width: 22px; height: 22px; border-radius: 999px; background: #FF4A00; border: 3px solid #FFFFFF;"></div>
+                <div style="position: absolute; left: 160px; top: 88px; width: 20px; height: 20px; border-radius: 999px; background: #5100FF; border: 3px solid #FFFFFF;"></div>
+                <div style="position: absolute; left: 272px; top: 52px; width: 20px; height: 20px; border-radius: 999px; background: #5100FF; border: 3px solid #FFFFFF;"></div>
+                <div style="position: absolute; left: 14px; right: 14px; bottom: 14px; border-radius: 14px; background: rgba(255,255,255,0.94); padding: 11px 14px; display: flex; align-items: center; justify-content: space-between;">
+                  <span style="font-size: 13px; font-weight: 500;">4.2 km end to end</span>
+                  <span style="font-size: 12px; font-weight: 500; color: #5100FF;">Open in Maps</span>
+                </div>
+              </div>
+            </div>
+            <div style="padding: 14px 20px 30px; background: #FFFFFF; border-top: 1px solid rgba(10,10,10,0.07); display: flex; gap: 10px;">
+              <div style="flex: 1; height: 54px; border-radius: 999px; background: #FF4A00; color: #FFFFFF; display: grid; place-items: center; font-weight: 500; font-size: 16px;">Take this Saturday</div>
+              <div style="width: 54px; height: 54px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.16); display: grid; place-items: center;"><div style="width: 13px; height: 16px; border: 2px solid #0A0A0A; border-bottom-color: transparent; border-radius: 2px 2px 0 0;"></div></div>
+            </div>
+          </div></div>
+      </div>
+      <div data-screen-label="30 Build a ricochet" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(10,10,10,0.45);">30 · Chaining your own</div>
+        <div style="width: 390px; height: 844px; border-radius: 42px; overflow: hidden; position: relative; background: #FFFFFF; box-shadow: 0 2px 4px rgba(10,10,10,0.08), 0 40px 70px -40px rgba(81,0,255,0.35);">
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column;">
+            <div style="padding: 60px 20px 0;">
+              <div style="display: flex; align-items: center; justify-content: space-between;"><span style="font-size: 14px; font-weight: 500; color: #6E6E76;">Cancel</span><span style="font-size: 14px; font-weight: 500; color: #FF4A00;">Publish</span></div>
+              <div style="font-weight: 500; font-size: 26px; letter-spacing: -0.02em; margin-top: 18px;">Slow Saturday, Kalk Bay</div>
+              <div style="font-size: 13px; color: #6E6E76; margin-top: 6px;">Drag the handle to reorder a stop</div>
+              <div style="margin-top: 16px; display: flex; gap: 8px;">
+                <span style="padding: 8px 14px; border-radius: 999px; background: #5100FF; color: #FFFFFF; font-size: 13px; font-weight: 500;">One day</span>
+                <span style="padding: 8px 14px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.14); font-size: 13px; font-weight: 500;">A trip</span>
+                <span style="padding: 8px 14px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.14); font-size: 13px; font-weight: 500;">Friends only</span>
+              </div>
+            </div>
+            <div style="flex: 1; min-height: 0; overflow: hidden; padding: 20px 20px 0; display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 16px; background: #F5F4FA;"><div style="width: 12px; height: 12px; border-radius: 999px; background: #FF4A00; flex-shrink: 0;"></div><div style="flex: 1; min-width: 0;"><div style="font-weight: 500; font-size: 15px;">Olympia Café</div><div style="font-size: 12px; color: #6E6E76; margin-top: 2px;">08:30 · breakfast</div></div><div style="display: flex; flex-direction: column; gap: 3px;"><div style="width: 16px; height: 2px; background: rgba(10,10,10,0.3);"></div><div style="width: 16px; height: 2px; background: rgba(10,10,10,0.3);"></div><div style="width: 16px; height: 2px; background: rgba(10,10,10,0.3);"></div></div></div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 16px; background: #F5F4FA;"><div style="width: 12px; height: 12px; border-radius: 999px; background: #5100FF; flex-shrink: 0;"></div><div style="flex: 1; min-width: 0;"><div style="font-weight: 500; font-size: 15px;">Kalk Bay harbour walk</div><div style="font-size: 12px; color: #6E6E76; margin-top: 2px;">10:00 · free</div></div><div style="display: flex; flex-direction: column; gap: 3px;"><div style="width: 16px; height: 2px; background: rgba(10,10,10,0.3);"></div><div style="width: 16px; height: 2px; background: rgba(10,10,10,0.3);"></div><div style="width: 16px; height: 2px; background: rgba(10,10,10,0.3);"></div></div></div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 16px; background: #F5F4FA;"><div style="width: 12px; height: 12px; border-radius: 999px; background: #5100FF; flex-shrink: 0;"></div><div style="flex: 1; min-width: 0;"><div style="font-weight: 500; font-size: 15px;">Live Bait</div><div style="font-size: 12px; color: #6E6E76; margin-top: 2px;">13:00 · lunch</div></div><div style="display: flex; flex-direction: column; gap: 3px;"><div style="width: 16px; height: 2px; background: rgba(10,10,10,0.3);"></div><div style="width: 16px; height: 2px; background: rgba(10,10,10,0.3);"></div><div style="width: 16px; height: 2px; background: rgba(10,10,10,0.3);"></div></div></div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 17px 14px; border-radius: 16px; border: 1.5px dashed rgba(10,10,10,0.2);"><span style="font-size: 18px; font-weight: 500; color: #FF4A00;">+</span><span style="font-size: 14px; font-weight: 500; color: #6E6E76;">Add a stop from the map, your passport, or search</span></div>
+              <div style="margin-top: 8px; border-radius: 16px; background: #EFEDF5; padding: 14px 16px; display: flex; align-items: center; gap: 12px;"><div style="width: 8px; height: 8px; border-radius: 999px; background: #5100FF; flex-shrink: 0;"></div><span style="font-size: 13px; color: rgba(10,10,10,0.68); line-height: 1.4;">Three stops, 4.2 km end to end. Walkable.</span></div>
+            </div>
+            <div style="padding: 10px 16px 26px; display: flex; justify-content: space-around; align-items: flex-start; background: rgba(255,255,255,0.95); border-top: 1px solid rgba(10,10,10,0.07);"><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px;"><div style="width: 20px; height: 20px; border-radius: 6px; background: rgba(10,10,10,0.16);"></div><span style="font-size: 10px; font-weight: 500; color: #6E6E76;">Discover</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px;"><div style="width: 20px; height: 20px; border-radius: 6px; background: #5100FF;"></div><span style="font-size: 10px; font-weight: 500; color: #5100FF;">Plans</span></div><div style="display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 8px;"><div style="width: 20px; height: 20px; border-radius: 999px; background: rgba(10,10,10,0.16);"></div><span style="font-size: 10px; font-weight: 500; color: #6E6E76;">Profile</span></div></div>
+          </div></div>
+      </div>
+      <div style="width: 390px; font-size: 12px; color: rgba(10,10,10,0.5); line-height: 1.5;">Ricochets work at two scales with one object: a day in your own city, or a multi-day trip abroad. Saving copies the stops into your Plans so you can cut and reorder without touching the original.</div>
+    </div>
+  </div>
+
+  <!-- ============ 12 FOR BUSINESSES ============ -->
+  <div style="display: flex; flex-direction: column; gap: 20px;">
+    <div style="display: flex; align-items: baseline; gap: 14px;">
+      <div style="font-weight: 500; font-size: 20px; letter-spacing: -0.02em;">12 — For businesses</div>
+      <div style="font-size: 13px; color: rgba(10,10,10,0.5);">Dashboard · add an event · analytics (spoofed data)</div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start;">
+
+      <div data-screen-label="31 Business dashboard" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(10,10,10,0.45);">31 · Business — your events</div>
+        <div style="width: 390px; height: 844px; border-radius: 42px; overflow: hidden; position: relative; background: #FFFFFF; box-shadow: 0 2px 4px rgba(10,10,10,0.08), 0 40px 70px -40px rgba(81,0,255,0.35);">
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column;">
+            <div style="background: #5100FF; padding: 60px 20px 22px; color: #FFFFFF;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 12px;"><div style="width: 40px; height: 40px; border-radius: 999px; background: #FFFFFF; display: grid; place-items: center; color: #5100FF; font-size: 14px; font-weight: 500; flex-shrink: 0;">TM</div><div><div style="font-weight: 500; font-size: 17px;">Tiger&rsquo;s Milk</div><div style="font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 1px;">Muizenberg · verified</div></div></div>
+                <div style="width: 34px; height: 34px; border-radius: 999px; background: rgba(255,255,255,0.18); display: grid; place-items: center; font-size: 15px;">···</div>
+              </div>
+              <div style="margin-top: 20px; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.7);">Last 30 days</div>
+              <div style="display: flex; gap: 24px; margin-top: 10px;">
+                <div><div style="font-weight: 500; font-size: 30px; letter-spacing: -0.02em;">1,284</div><div style="font-size: 11px; color: rgba(255,255,255,0.72); margin-top: 2px;">Saw you</div></div>
+                <div><div style="font-weight: 500; font-size: 30px; letter-spacing: -0.02em;">216</div><div style="font-size: 11px; color: rgba(255,255,255,0.72); margin-top: 2px;">Said yes</div></div>
+                <div><div style="font-weight: 500; font-size: 30px; letter-spacing: -0.02em; color: #FFC9B3;">17%</div><div style="font-size: 11px; color: rgba(255,255,255,0.72); margin-top: 2px;">Turned up</div></div>
+              </div>
+            </div>
+            <div style="flex: 1; min-height: 0; overflow: hidden; padding: 18px 20px 0;">
+              <div style="display: flex; align-items: baseline; justify-content: space-between;"><div style="font-weight: 500; font-size: 17px;">Live now</div><span style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; color: #6E6E76;">2 EVENTS</span></div>
+              <div style="margin-top: 12px; border-radius: 18px; border: 1px solid rgba(10,10,10,0.1); padding: 14px 16px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                  <div class="ph" style="width: 52px; height: 52px; border-radius: 12px; background-image: url('uploads/Cross_vertical_9_small.webp'); flex-shrink: 0;"></div>
+                  <div style="flex: 1; min-width: 0;"><div style="display: flex; align-items: center; gap: 7px;"><span style="width: 7px; height: 7px; border-radius: 999px; background: #FF4A00;"></span><span style="font-size: 11px; font-weight: 500; letter-spacing: 0.06em; color: #FF4A00;">TONIGHT 18:30</span></div><div style="font-weight: 500; font-size: 16px; margin-top: 4px;">Sunset supper club</div><div style="font-size: 12px; color: #6E6E76; margin-top: 3px;">64 interested · 41 going</div></div>
+                </div>
+                <div style="margin-top: 12px; height: 8px; border-radius: 999px; background: #EFEDF5; overflow: hidden; display: flex;"><div style="width: 58%; background: #FF4A00;"></div><div style="width: 20%; background: #B9A6FF;"></div></div>
+                <div style="margin-top: 8px; display: flex; gap: 16px; font-size: 11px; color: #6E6E76;"><span>41 of 70 seats</span><span>14 on the maybe list</span></div>
+              </div>
+              <div style="margin-top: 12px; border-radius: 18px; border: 1px solid rgba(10,10,10,0.1); padding: 14px 16px;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                  <div class="ph" style="width: 52px; height: 52px; border-radius: 12px; background-image: url('uploads/Cross_vertical_11_small.webp'); flex-shrink: 0;"></div>
+                  <div style="flex: 1; min-width: 0;"><div style="font-size: 11px; font-weight: 500; letter-spacing: 0.06em; color: #6E6E76;">SAT 27 SEP · 07:00</div><div style="font-weight: 500; font-size: 16px; margin-top: 4px;">Sunrise paddle + coffee</div><div style="font-size: 12px; color: #6E6E76; margin-top: 3px;">23 interested · 9 going</div></div>
+                </div>
+              </div>
+              <div style="margin-top: 18px; font-weight: 500; font-size: 17px;">Past</div>
+              <div style="margin-top: 10px; display: flex; align-items: center; gap: 12px; padding: 13px 14px; border-radius: 16px; background: #F5F4FA;"><div style="flex: 1; min-width: 0;"><div style="font-weight: 500; font-size: 15px;">Long table, 12 Sep</div><div style="font-size: 12px; color: #6E6E76; margin-top: 2px;">58 turned up of 63 going · 92%</div></div><span style="font-size: 12px; font-weight: 500; color: #5100FF;">Report</span></div>
+            </div>
+            <div style="padding: 12px 20px 30px; background: #FFFFFF; border-top: 1px solid rgba(10,10,10,0.07);"><div style="height: 54px; border-radius: 999px; background: #FF4A00; color: #FFFFFF; display: grid; place-items: center; font-weight: 500; font-size: 16px;">Put something on</div></div>
+          </div></div>
+      </div>
+      <div data-screen-label="32 Add an event" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(10,10,10,0.45);">32 · Business — putting something on</div>
+        <div style="width: 390px; height: 844px; border-radius: 42px; overflow: hidden; position: relative; background: #FFFFFF; box-shadow: 0 2px 4px rgba(10,10,10,0.08), 0 40px 70px -40px rgba(81,0,255,0.35);">
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column;">
+            <div style="padding: 60px 20px 0;">
+              <div style="display: flex; align-items: center; justify-content: space-between;"><span style="font-size: 14px; font-weight: 500; color: #6E6E76;">Cancel</span><span style="font-size: 12px; font-weight: 500; color: #6E6E76;">Step 2 of 3</span></div>
+              <div style="margin-top: 14px; height: 4px; border-radius: 999px; background: #EFEDF5; overflow: hidden;"><div style="width: 66%; height: 100%; background: #FF4A00;"></div></div>
+              <div style="font-weight: 500; font-size: 26px; letter-spacing: -0.02em; margin-top: 18px;">What&rsquo;s happening?</div>
+            </div>
+            <div style="flex: 1; min-height: 0; overflow: hidden; padding: 16px 20px 0; display: flex; flex-direction: column; gap: 12px;">
+              <div><div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6E76;">Name</div><div style="margin-top: 7px; height: 46px; border-radius: 14px; background: #F5F4FA; display: flex; align-items: center; padding: 0 14px; font-size: 15px;">Sunset supper club</div></div>
+              <div style="display: flex; gap: 10px;"><div style="flex: 1;"><div><div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6E76;">Date</div><div style="margin-top: 7px; height: 46px; border-radius: 14px; background: #F5F4FA; display: flex; align-items: center; padding: 0 14px; font-size: 15px;">Fri 26 Sep</div></div></div><div style="flex: 1;"><div><div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6E76;">Starts</div><div style="margin-top: 7px; height: 46px; border-radius: 14px; background: #F5F4FA; display: flex; align-items: center; padding: 0 14px; font-size: 15px;">18:30</div></div></div></div>
+              <div><div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6E76;">The shape of it</div>
+                <div style="margin-top: 9px; display: flex; flex-wrap: wrap; gap: 8px;">
+                  <span style="padding: 9px 14px; border-radius: 999px; background: #5100FF; color: #FFFFFF; font-size: 13px; font-weight: 500;">Food</span>
+                  <span style="padding: 9px 14px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.14); font-size: 13px; font-weight: 500;">Outdoors</span>
+                  <span style="padding: 9px 14px; border-radius: 999px; background: #5100FF; color: #FFFFFF; font-size: 13px; font-weight: 500;">Slow evening</span>
+                  <span style="padding: 9px 14px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.14); font-size: 13px; font-weight: 500;">Loud night</span>
+                  <span style="padding: 9px 14px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.14); font-size: 13px; font-weight: 500;">Solo-friendly</span>
+                </div>
+              </div>
+              <div style="display: flex; gap: 10px;"><div style="flex: 1;"><div><div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6E76;">Seats</div><div style="margin-top: 7px; height: 46px; border-radius: 14px; background: #F5F4FA; display: flex; align-items: center; padding: 0 14px; font-size: 15px;">70</div></div></div><div style="flex: 1;"><div><div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6E76;">Per head</div><div style="margin-top: 7px; height: 46px; border-radius: 14px; background: #F5F4FA; display: flex; align-items: center; padding: 0 14px; font-size: 15px;">R 280</div></div></div></div>
+              <div><div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6E6E76;">Photo</div>
+                <div class="ph" style="margin-top: 8px; height: 84px; border-radius: 16px; background-image: url('uploads/Cross_vertical_9_small.webp'); position: relative;"><div style="position: absolute; right: 10px; bottom: 10px; padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,0.94); font-size: 12px; font-weight: 500;">Replace</div></div>
+              </div>
+              <div style="border-radius: 16px; background: #EFEDF5; padding: 12px 16px; display: flex; align-items: center; gap: 12px;"><div style="width: 8px; height: 8px; border-radius: 999px; background: #5100FF; flex-shrink: 0;"></div><span style="font-size: 13px; color: rgba(10,10,10,0.68); line-height: 1.4;">Tagged this way, we&rsquo;d show it to about 900 people near you.</span></div>
+            </div>
+            <div style="padding: 12px 20px 30px; background: #FFFFFF; border-top: 1px solid rgba(10,10,10,0.07);"><div style="height: 54px; border-radius: 999px; background: #FF4A00; color: #FFFFFF; display: grid; place-items: center; font-weight: 500; font-size: 16px;">Preview the card</div></div>
+          </div></div>
+      </div>
+      <div data-screen-label="33 Event analytics" style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(10,10,10,0.45);">33 · Business — how it went</div>
+        <div style="width: 390px; height: 844px; border-radius: 42px; overflow: hidden; position: relative; background: #FFFFFF; box-shadow: 0 2px 4px rgba(10,10,10,0.08), 0 40px 70px -40px rgba(81,0,255,0.35);">
+          <div style="position: absolute; inset: 0; display: flex; flex-direction: column;">
+            <div style="padding: 60px 20px 0;">
+              <div style="width: 34px; height: 34px; border-radius: 999px; background: #F5F4FA; display: grid; place-items: center;"><div style="width: 9px; height: 9px; border-left: 2px solid #0A0A0A; border-bottom: 2px solid #0A0A0A; transform: rotate(45deg); margin-left: 3px;"></div></div>
+              <div style="font-weight: 500; font-size: 26px; letter-spacing: -0.02em; margin-top: 16px; line-height: 1.1;">Long table, 12 Sep</div>
+              <div style="font-size: 13px; color: #6E6E76; margin-top: 6px;">Closed · 63 going · 58 turned up</div>
+              <div style="margin-top: 16px; display: flex; gap: 8px;"><div style="flex: 1; border-radius: 16px; background: #F5F4FA; padding: 14px;"><div style="font-weight: 500; font-size: 24px; color: #FF4A00;">92%</div><div style="font-size: 10px; color: #6E6E76; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px;">Turn-up rate</div></div><div style="flex: 1; border-radius: 16px; background: #F5F4FA; padding: 14px;"><div style="font-weight: 500; font-size: 24px; color: #0A0A0A;">1,940</div><div style="font-size: 10px; color: #6E6E76; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px;">Impressions</div></div><div style="flex: 1; border-radius: 16px; background: #F5F4FA; padding: 14px;"><div style="font-weight: 500; font-size: 24px; color: #0A0A0A;">3.2%</div><div style="font-size: 10px; color: #6E6E76; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px;">Saved</div></div></div>
+            </div>
+            <div style="flex: 1; min-height: 0; overflow: hidden; padding: 20px 20px 0; display: flex; flex-direction: column; gap: 20px;">
+              <div>
+                <div style="display: flex; align-items: baseline; justify-content: space-between;"><div style="font-weight: 500; font-size: 15px;">Interest by day</div><span style="font-size: 11px; color: #6E6E76;">Peaked 2 days out</span></div>
+                <div style="margin-top: 12px; display: flex; gap: 6px; align-items: flex-end;">
+                  <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;"><div style="width: 100%; display: flex; align-items: flex-end; height: 118px;"><div style="width: 100%; height: 18%; border-radius: 6px 6px 3px 3px; background: #B9A6FF;"></div></div><span style="font-size: 10px; color: #6E6E76;">-7</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;"><div style="width: 100%; display: flex; align-items: flex-end; height: 118px;"><div style="width: 100%; height: 26%; border-radius: 6px 6px 3px 3px; background: #B9A6FF;"></div></div><span style="font-size: 10px; color: #6E6E76;">-6</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;"><div style="width: 100%; display: flex; align-items: flex-end; height: 118px;"><div style="width: 100%; height: 30%; border-radius: 6px 6px 3px 3px; background: #B9A6FF;"></div></div><span style="font-size: 10px; color: #6E6E76;">-5</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;"><div style="width: 100%; display: flex; align-items: flex-end; height: 118px;"><div style="width: 100%; height: 46%; border-radius: 6px 6px 3px 3px; background: #B9A6FF;"></div></div><span style="font-size: 10px; color: #6E6E76;">-4</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;"><div style="width: 100%; display: flex; align-items: flex-end; height: 118px;"><div style="width: 100%; height: 62%; border-radius: 6px 6px 3px 3px; background: #B9A6FF;"></div></div><span style="font-size: 10px; color: #6E6E76;">-3</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;"><div style="width: 100%; display: flex; align-items: flex-end; height: 118px;"><div style="width: 100%; height: 100%; border-radius: 6px 6px 3px 3px; background: #FF4A00;"></div></div><span style="font-size: 10px; color: #6E6E76;">-2</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;"><div style="width: 100%; display: flex; align-items: flex-end; height: 118px;"><div style="width: 100%; height: 78%; border-radius: 6px 6px 3px 3px; background: #B9A6FF;"></div></div><span style="font-size: 10px; color: #6E6E76;">-1</span></div><div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px;"><div style="width: 100%; display: flex; align-items: flex-end; height: 118px;"><div style="width: 100%; height: 52%; border-radius: 6px 6px 3px 3px; background: #B9A6FF;"></div></div><span style="font-size: 10px; color: #6E6E76;">Day</span></div>
+                </div>
+              </div>
+              <div>
+                <div style="font-weight: 500; font-size: 15px;">Who came</div>
+                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 11px;">
+                  <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 13px; width: 96px; flex-shrink: 0;">Within 5 km</span><div style="flex: 1; height: 8px; border-radius: 999px; background: #EFEDF5; overflow: hidden;"><div style="width: 74%; height: 100%; background: #5100FF; border-radius: 999px;"></div></div></div>
+                  <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 13px; width: 96px; flex-shrink: 0;">With a friend</span><div style="flex: 1; height: 8px; border-radius: 999px; background: #EFEDF5; overflow: hidden;"><div style="width: 61%; height: 100%; background: #5100FF; border-radius: 999px;"></div></div></div>
+                  <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 13px; width: 96px; flex-shrink: 0;">First time</span><div style="flex: 1; height: 8px; border-radius: 999px; background: #EFEDF5; overflow: hidden;"><div style="width: 38%; height: 100%; background: #FF4A00; border-radius: 999px;"></div></div></div>
+                  <div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 13px; width: 96px; flex-shrink: 0;">Via a ricochet</span><div style="flex: 1; height: 8px; border-radius: 999px; background: #EFEDF5; overflow: hidden;"><div style="width: 22%; height: 100%; background: #0E6E77; border-radius: 999px;"></div></div></div>
+                </div>
+              </div>
+              <div style="border-radius: 18px; background: #5100FF; padding: 16px 18px; color: #FFFFFF;">
+                <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.72);">What we&rsquo;d do next</div>
+                <div style="font-size: 15px; line-height: 1.45; margin-top: 7px;">Thursdays out-perform Fridays for you by a third. Same table, one night earlier.</div>
+              </div>
+            </div>
+            <div style="padding: 12px 20px 30px; background: #FFFFFF; border-top: 1px solid rgba(10,10,10,0.07); display: flex; gap: 10px;">
+              <div style="flex: 1; height: 54px; border-radius: 999px; background: #FF4A00; color: #FFFFFF; display: grid; place-items: center; font-weight: 500; font-size: 16px;">Run it again</div>
+              <div style="width: 110px; height: 54px; border-radius: 999px; border: 1.5px solid rgba(10,10,10,0.16); display: grid; place-items: center; font-weight: 500; font-size: 15px;">Export</div>
+            </div>
+          </div></div>
+      </div>
+      <div style="width: 390px; font-size: 12px; color: rgba(10,10,10,0.5); line-height: 1.5;">Spoofed numbers throughout. Business screens reuse the consumer shell exactly — same gutters, same pill buttons, no bottom nav — with a purple header as the account colour so it reads as a different surface, not a different product.</div>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+</body>
+</html>

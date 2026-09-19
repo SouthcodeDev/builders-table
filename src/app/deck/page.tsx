@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useRef, useState } from "react";
-import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from "motion/react";
+import { useEffect, useMemo, useRef } from "react";
+import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import { useDrag } from "@use-gesture/react";
+import { ArrowLeft, ArrowRight, Check, X } from "lucide-react";
 import { COPY, weekday, type Place } from "@/data/seed";
 import { AvatarStack } from "@/components/avatar-stack";
 import { DeckCard } from "@/components/deck-card";
@@ -12,19 +13,23 @@ import { usePlaces } from "@/state/places";
 const THRESHOLD = 90;
 const WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six"];
 
+/**
+ * The stack. Every card is the same box; only the transform differs, so the
+ * rotation and the drop are always visible no matter the card's aspect.
+ */
+const STACK = [
+  "rotate(-7deg) translateY(22px) scale(0.90)", // back
+  "rotate(5deg) translateY(11px) scale(0.95)", // middle
+] as const;
+
 export default function DeckPage() {
   const router = useRouter();
   const {
     ready, mode, deckEvents, deckPicks, markDeck, attendanceFor, distanceTo, reasonFor,
+    addPlan, planFor,
   } = usePlaces();
   const x = useMotionValue(0);
-  const [pastThreshold, setPastThreshold] = useState(false);
   const flying = useRef(false);
-
-  useMotionValueEvent(x, "change", (v) => {
-    const past = Math.abs(v) >= THRESHOLD;
-    if (past !== pastThreshold) setPastThreshold(past);
-  });
 
   const rotate = useTransform(x, [-200, 200], [-12, 12]);
   const stampOpacity = useTransform(x, [THRESHOLD * 0.5, THRESHOLD], [0, 1]);
@@ -41,6 +46,17 @@ export default function DeckPage() {
   );
 
   const top: Place | undefined = remaining[0];
+  const done = ready && !top;
+
+  // Choices are only locked in once the last card is gone — that's when every yes
+  // becomes a bookmark. Ref-guarded so the write happens exactly once per deck.
+  const banked = useRef(false);
+  useEffect(() => {
+    if (!done || banked.current) return;
+    banked.current = true;
+    // Never downgrade a place you've already committed to going to.
+    yeses.filter((p) => !planFor(p.id)).forEach((p) => addPlan(p.id, "saved"));
+  }, [done, yeses, planFor, addPlan]);
 
   const commit = (verdict: "yes" | "pass") => {
     if (!top || flying.current) return;
@@ -50,15 +66,8 @@ export default function DeckPage() {
       () => {
         x.set(0);
         flying.current = false;
-        setPastThreshold(false);
       },
     );
-  };
-
-  const saveCurrent = () => {
-    if (!top || flying.current) return;
-    markDeck(top.id, "saved");
-    x.set(0);
   };
 
   const bind = useDrag(
@@ -81,7 +90,6 @@ export default function DeckPage() {
 
   const seen = deckEvents.length - remaining.length;
   const total = deckEvents.length;
-  const done = !top;
 
   const firstNameFriend = yeses
     .flatMap((p) => attendanceFor(p.id).friends)
@@ -94,10 +102,8 @@ export default function DeckPage() {
           "Africa/Johannesburg",
         )}'s work.`;
 
-  const planTarget = yeses.find((p) => attendanceFor(p.id).friends.length > 0) ?? yeses[0];
-
   return (
-    <main className="flex min-h-dvh flex-1 flex-col bg-hero px-5 pt-safe pb-safe text-white">
+    <main className="flex min-h-dvh flex-1 flex-col bg-accent px-5 pt-safe pb-safe text-white">
       {done ? (
         <>
           <div className="mt-[60px] flex flex-col gap-3.5">
@@ -130,21 +136,12 @@ export default function DeckPage() {
           </div>
           <div className="mt-auto flex flex-col gap-3">
             <p className="text-sm leading-[1.5] text-white/60">{COPY.deck.endFootnote}</p>
-            {mode === "active" && planTarget ? (
-              <button
-                onClick={() => router.push(`/place/${planTarget.id}`)}
-                className="button flex h-[54px] w-full items-center justify-center bg-surface text-base font-medium text-hero"
-              >
-                Plan the one with {firstNameFriend ?? "someone"}
-              </button>
-            ) : (
-              <button
-                onClick={() => router.push("/")}
-                className="button flex h-[54px] w-full items-center justify-center bg-surface text-base font-medium text-hero"
-              >
-                {COPY.deck.endClose}
-              </button>
-            )}
+            <button
+              onClick={() => router.push(yeses.length > 0 ? "/saved" : "/")}
+              className="button flex h-[54px] w-full items-center justify-center bg-surface text-base font-medium text-hero"
+            >
+              {yeses.length > 0 ? COPY.deck.endSaved : COPY.deck.endClose}
+            </button>
           </div>
         </>
       ) : (
@@ -168,18 +165,25 @@ export default function DeckPage() {
             ))}
           </div>
 
+          {/* The stack sits inset so the rotated cards behind stay on screen. */}
           <div className="relative mt-[22px] min-h-0 flex-1">
-            {behind[1] && (
-              <div className="absolute inset-x-[22px] bottom-[26px] top-4 rounded-deckcard bg-deck-deep" style={{ transform: "rotate(-3deg)" }} />
-            )}
-            {behind[0] && (
-              <div className="absolute inset-x-3 bottom-[18px] top-2 rounded-deckcard bg-deck-card" style={{ transform: "rotate(1.6deg)" }} />
-            )}
+            {[...behind].reverse().map((p, i) => (
+              <div
+                key={p.id}
+                className={`absolute inset-x-4 bottom-[46px] top-2 rounded-deckcard ${
+                  behind.length === 2 && i === 0 ? "bg-deck-deep" : "bg-deck-card"
+                }`}
+                style={{
+                  transform: STACK[behind.length === 2 && i === 0 ? 0 : 1],
+                  transformOrigin: "bottom center",
+                }}
+              />
+            ))}
             {top && (
               <div
                 {...bind()}
                 style={{ touchAction: "pan-y" }}
-                className="absolute inset-0 cursor-grab select-none active:cursor-grabbing"
+                className="absolute inset-x-4 bottom-[46px] top-2 cursor-grab select-none active:cursor-grabbing"
               >
                 <motion.div style={{ x, rotate }} className="absolute inset-0">
                   <DeckCard
@@ -199,32 +203,24 @@ export default function DeckPage() {
             )}
           </div>
 
-          <div className="mt-[18px] flex items-center justify-center gap-6">
+          <div className="mt-6 flex items-center justify-center gap-16">
             <button
               onClick={() => commit("pass")}
-              className="grid h-[58px] w-[58px] place-items-center rounded-full border-[1.5px] border-white/28 text-[13px] font-medium text-white/85"
+              aria-label={COPY.deck.pass}
+              className="flex items-center gap-2.5 text-white/75 active:text-white"
             >
-              {COPY.deck.pass}
-            </button>
-            <button
-              onClick={saveCurrent}
-              className="grid h-[52px] w-[52px] place-items-center rounded-full border-[1.5px] border-white/28 text-xs font-medium text-white/85"
-            >
-              {COPY.deck.save.split(" ")[0]}
+              <ArrowLeft size={22} strokeWidth={2} aria-hidden />
+              <X size={32} strokeWidth={2.25} aria-hidden />
             </button>
             <button
               onClick={() => commit("yes")}
-              className="grid h-[62px] w-[62px] place-items-center rounded-full bg-surface text-sm font-medium text-hero shadow-[0_14px_26px_-12px_rgba(81,0,255,0.9)]"
+              aria-label={COPY.deck.yes}
+              className="flex items-center gap-2.5 text-white active:opacity-65"
             >
-              {COPY.deck.yes}
+              <Check size={32} strokeWidth={2.25} aria-hidden />
+              <ArrowRight size={22} strokeWidth={2} aria-hidden />
             </button>
           </div>
-          {pastThreshold && (
-            <p className="mt-[18px] text-center text-[13px] leading-[1.4] text-white/50">
-              <span className="text-white/90">{COPY.deck.releaseYes}</span>{" "}
-              {COPY.deck.releaseNote}
-            </p>
-          )}
         </>
       )}
     </main>

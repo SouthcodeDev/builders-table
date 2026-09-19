@@ -3,16 +3,19 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { MapPin } from "lucide-react";
+import { MapPin, Shuffle } from "lucide-react";
 import {
   CITIES,
   COPY,
+  placesIn,
   INTEREST_CHIPS,
   placeById,
   daypart,
   formatLocal,
   weekday,
 } from "@/data/seed";
+import { pickBounce, bounceReason } from "@/data/rank";
+import { BounceSheet } from "@/components/bounce-sheet";
 import { EventCard } from "@/components/event-card";
 import { LogoMark } from "@/components/logo-mark";
 import MapView from "@/components/map-view";
@@ -26,11 +29,24 @@ type Tab = "map" | "feed";
 export default function DiscoverPage() {
   const router = useRouter();
   const {
-    ready, mode, user, interests, city, area, radiusKm, events,
+    ready, mode, user, interests, city, area, radiusKm, events, myEvents,
     attendanceFor, distanceTo, addPlan,
   } = usePlaces();
   const [tab, setTab] = useState<Tab>("map");
   const [pinId, setPinId] = useState<string | null>(null);
+  // Bounce lands on ONE place outside the comfort zone. It is deliberately not
+  // radius-filtered — the whole point is somewhere you would not have looked.
+  const [bounceId, setBounceId] = useState<string | null>(null);
+  const [bounced, setBounced] = useState<string[]>([]);
+
+  const doBounce = () => {
+    const pool = [...placesIn(city), ...myEvents.filter((p) => p.city === city)];
+    const hit = pickBounce(pool, interests, bounced);
+    if (!hit) return;
+    setPinId(null);
+    setBounceId(hit.id);
+    setBounced((prev) => [...prev, hit.id]);
+  };
 
   if (!ready) {
     return <main className="min-h-dvh flex-1 bg-canvas" />;
@@ -44,6 +60,13 @@ export default function DiscoverPage() {
     .map((c) => c.label.toLowerCase());
 
   const pinPlace = pinId ? placeById(pinId) : null;
+  const bouncePlace = bounceId ? placeById(bounceId) : null;
+  const brandIds = myEvents.map((p) => p.id);
+  // The bounce target sits outside the filtered set, so the map is handed it too.
+  const mapPlaces =
+    bouncePlace && !events.some((p) => p.id === bouncePlace.id)
+      ? [...events, bouncePlace]
+      : events;
 
   const tokyoClock = city === "tokyo"
     ? new Intl.DateTimeFormat("en-GB", {
@@ -233,10 +256,20 @@ export default function DiscoverPage() {
               <div className="fixed inset-0 z-0">
                 <MapView
                   city={city}
-                  places={events}
-                  selectedId={pinId}
+                  places={mapPlaces}
+                  selectedId={bounceId ?? pinId}
                   onSelectPin={setPinId}
+                  brandIds={brandIds}
                 />
+              </div>
+              <div className="fixed inset-x-0 bottom-tabbar z-20 mb-[104px] flex justify-center">
+                <button
+                  onClick={doBounce}
+                  className="button flex h-[52px] items-center gap-3 bg-pop px-[22px] text-[15px] font-medium text-white shadow-pop"
+                >
+                  <Shuffle size={18} strokeWidth={2.25} aria-hidden />
+                  {COPY.bounce.cta}
+                </button>
               </div>
               <div className="pointer-events-none fixed inset-x-4 bottom-tabbar z-10 rounded-big bg-white/95 p-4 shadow-sheet">
                 <p className="text-[10px] font-medium tracking-[0.08em] text-muted">
@@ -252,7 +285,7 @@ export default function DiscoverPage() {
       )}
 
       {/* pin sheet */}
-      {pinPlace && tab === "map" && (
+      {pinPlace && !bouncePlace && tab === "map" && (
         <div className="bottom-tabbar fixed inset-x-0 z-40 px-4">
           <PinSheet
             place={pinPlace}
@@ -266,6 +299,21 @@ export default function DiscoverPage() {
             onDirections={() => router.push(`/go/${pinPlace.id}`)}
           />
         </div>
+      )}
+
+      {bouncePlace && (
+        <BounceSheet
+          open
+          onOpenChange={(o) => !o && setBounceId(null)}
+          place={bouncePlace}
+          distanceKm={distanceTo(bouncePlace)}
+          why={(() => {
+            const t = bounceReason(bouncePlace, interests);
+            return t ? COPY.bounce.whyTagged(t) : COPY.bounce.why;
+          })()}
+          onCheck={() => router.push(`/place/${bouncePlace.id}`)}
+          onSkip={() => setBounceId(null)}
+        />
       )}
 
       <TabBar />

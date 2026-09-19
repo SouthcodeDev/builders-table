@@ -32,10 +32,17 @@ export default function PlaceDetailPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const {
-    user, friends, attendanceFor, distanceTo, addPlan, removePlan, planFor, sendInvite,
+    ready, user, friends, attendanceFor, distanceTo, addPlan, removePlan, planFor,
+    sendInvite,
   } = usePlaces();
   const [inviting, setInviting] = useState(false);
   const [sentTo, setSentTo] = useState<Person[] | null>(null);
+
+  // Business-created events only resolve after hydrate (see data/registry.ts), so
+  // never decide "gone" before the provider is ready.
+  if (!ready) {
+    return <main className="min-h-dvh flex-1 bg-canvas" />;
+  }
 
   const place = placeById(params.id);
   if (!place) {

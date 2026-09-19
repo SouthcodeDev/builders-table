@@ -17,7 +17,7 @@ export function InterestTile({
     <button
       onClick={onToggle}
       className={`photo relative h-full min-h-[64px] w-full overflow-hidden rounded-2xl text-left ${
-        selected ? "shadow-[inset_0_0_0_2.5px_#5100FF]" : ""
+        selected ? "shadow-[inset_0_0_0_2.5px_#FF5C29]" : ""
       }`}
       style={{ backgroundImage: `url(/images/interests/${tag}.jpg)` }}
     >

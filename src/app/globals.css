@@ -89,6 +89,8 @@
   --color-pop: #FF5C29;
   /* Secondary-affirmative outline on the event sheet (Places4 detail redraw) */
   --color-lime: #a6c84c;
+  /* Warm tint for the standout stat on the business header (handoff screen 31) */
+  --color-accent-warm: #ffc9b3;
   --color-deck-deep: #3b00b8;
   --color-deck-card: #3b1fae;
   --color-muted: #6e6e76;
