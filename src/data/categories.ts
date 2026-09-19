@@ -44,7 +44,7 @@ const PRECEDENCE: [Tag, Category][] = [
   ['wellness', 'wellness'],
   ['live-shows', 'stage'],
   ['heritage', 'heritage'],
-  ['fitness', 'fitness'],
+  ['fashion', 'fashion'],
   ['beach', 'beach'],
   ['nature', 'nature'],
   ['outdoors', 'outdoors'],

@@ -453,7 +453,7 @@ export const PLACES: Place[] = [
     "durationMin": 120,
     "price": null,
     "tags": [
-      "fitness",
+      "fashion",
       "climbing",
       "social"
     ],
@@ -479,7 +479,7 @@ export const PLACES: Place[] = [
     "durationMin": 90,
     "price": null,
     "tags": [
-      "fitness",
+      "fashion",
       "social",
       "family"
     ],
@@ -532,7 +532,7 @@ export const PLACES: Place[] = [
     "price": null,
     "tags": [
       "outdoors",
-      "fitness",
+      "fashion",
       "family"
     ],
     "image": "/images/acrobranch.jpg",
@@ -1220,7 +1220,7 @@ export const PLACES: Place[] = [
     "price": null,
     "tags": [
       "wellness",
-      "fitness"
+      "fashion"
     ],
     "image": "/images/flow-lab.jpg",
     "imageCredit": "TODO"
@@ -1244,7 +1244,7 @@ export const PLACES: Place[] = [
     "durationMin": 90,
     "price": null,
     "tags": [
-      "fitness",
+      "fashion",
       "social"
     ],
     "image": "/images/lifestyle-padel.jpg",
@@ -1269,7 +1269,7 @@ export const PLACES: Place[] = [
     "durationMin": 120,
     "price": null,
     "tags": [
-      "fitness",
+      "fashion",
       "outdoors",
       "surfing",
       "beach"
@@ -1296,7 +1296,7 @@ export const PLACES: Place[] = [
     "durationMin": 360,
     "price": null,
     "tags": [
-      "fitness",
+      "fashion",
       "outdoors",
       "cycling"
     ],
